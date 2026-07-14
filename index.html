@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="KulDhan">
+<meta name="apple-mobile-web-app-title" content="FamilySafe">
 <meta name="theme-color" content="#1D9E75">
-<title>KulDhan — Family Vault</title>
+<title>FamilySafe — Family Vault</title>
 <link rel="manifest" href="#" id="manifest-link">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -121,14 +121,14 @@ a{color:var(--green);text-decoration:none}
         <span style="font-size:20px;flex-shrink:0">📱</span>
         <div>
           <div style="font-size:13px;font-weight:600;margin-bottom:2px">Your data stays on your device</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.5">All records are stored on your phone or computer only. KulDhan's servers store nothing about you.</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">All records are stored on your phone or computer only. FamilySafe's servers store nothing about you.</div>
         </div>
       </div>
       <div style="display:flex;gap:10px;padding:10px 12px;background:#f5f4ef;border-radius:var(--r2)">
         <span style="font-size:20px;flex-shrink:0">🔑</span>
         <div>
           <div style="font-size:13px;font-weight:600;margin-bottom:2px">Only you can read it</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.5">Data is encrypted with a key only you hold. No one — not KulDhan, not Google — can access your records.</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">Data is encrypted with a key only you hold. No one — not FamilySafe, not Google — can access your records.</div>
         </div>
       </div>
       <div style="display:flex;gap:10px;padding:10px 12px;background:#f5f4ef;border-radius:var(--r2)">
@@ -147,7 +147,7 @@ a{color:var(--green);text-decoration:none}
       </div>
     </div>
     <div style="font-size:11px;color:var(--text3);background:#f5f4ef;border-radius:var(--r2);padding:10px 12px;margin-bottom:16px;line-height:1.6">
-      <strong style="color:var(--text2)">Disclaimer:</strong> KulDhan is a personal records organiser, not a licensed financial or medical adviser. Information stored here is for your personal reference only. KulDhan is not liable for any loss arising from use of this application, including loss of data. By continuing, you confirm you have read and understood these terms.
+      <strong style="color:var(--text2)">Disclaimer:</strong> FamilySafe is a personal records organiser, not a licensed financial or medical adviser. Information stored here is for your personal reference only. FamilySafe is not liable for any loss arising from use of this application, including loss of data. By continuing, you confirm you have read and understood these terms.
     </div>
     <button class="btn-primary" onclick="acceptPrivacy()">I understand — open my vault →</button>
     <div style="text-align:center;font-size:11px;color:var(--text4);margin-top:10px">Encrypted locally · no server · DPDP Act 2023 compliant</div>
@@ -160,7 +160,7 @@ a{color:var(--green);text-decoration:none}
 <!-- Main app -->
 <div id="app">
   <div id="header">
-    <h1><span>🔐</span> KulDhan</h1>
+    <h1><span>🔐</span> FamilySafe</h1>
     <div id="header-actions" style="display:flex;align-items:center;gap:8px">
       <button onclick="exportData()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--r3);padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer">Export</button>
       <button onclick="showDriveInfo()" style="background:none;border:none;font-size:20px;cursor:pointer" title="Google Drive">☁️</button>
@@ -248,7 +248,7 @@ function showDriveInfo() {
   openSheet('Google Drive backup', `
     <div class="notice notice-green" style="margin-bottom:16px">
       <strong>Your data, your Drive</strong><br>
-      When you export and upload to Google Drive, files go directly into <em>your own</em> Google account. KulDhan has no access to your Drive.
+      When you export and upload to Google Drive, files go directly into <em>your own</em> Google account. FamilySafe has no access to your Drive.
     </div>
     <div style="font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:20px">
       <strong>How to back up:</strong><br>
@@ -257,7 +257,7 @@ function showDriveInfo() {
       3. Upload the file to a private folder<br><br>
       <strong>To restore on a new device:</strong><br>
       1. Download the <code>.json</code> from your Drive<br>
-      2. Open KulDhan → tap <strong>Export</strong> → choose <strong>Import</strong><br>
+      2. Open FamilySafe → tap <strong>Export</strong> → choose <strong>Import</strong><br>
     </div>
     <button class="btn-primary" onclick="exportData();closeSheet()">Export now</button>
   `);
@@ -336,7 +336,7 @@ function renderHome() {
   document.getElementById('content').innerHTML = `
     <div style="margin-bottom:18px">
       <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px">Good day 👋</div>
-      <div style="font-size:13px;color:var(--text3);margin-top:3px">KulDhan Family Vault · stored locally on this device</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:3px">FamilySafe Family Vault · stored locally on this device</div>
     </div>
     ${members === 0 ? `
     <div class="card" style="background:var(--green-light);border-color:#9FE1CB;display:flex;align-items:center;gap:14px">
@@ -932,7 +932,7 @@ function deleteSOSContact(i) {
 }
 
 function shareSOSWhatsApp() {
-  const lines = ['🚨 *KulDhan Emergency Card*', ''];
+  const lines = ['🚨 *FamilySafe Emergency Card*', ''];
   DB.members.filter(m=>m.blood_group).forEach(m => lines.push(`🩸 ${m.name}: *${m.blood_group}*`));
   lines.push('');
   const allergies = [];
@@ -964,7 +964,7 @@ function openShareSheet() {
 }
 
 function shareHealthSummary() {
-  const lines = ['📋 *KulDhan Health Summary*', ''];
+  const lines = ['📋 *FamilySafe Health Summary*', ''];
   DB.members.forEach(m => {
     const h = DB.health[m.id]||{};
     lines.push(`👤 *${m.name}*${m.blood_group?' ('+m.blood_group+')':''}`);
