@@ -8,8 +8,6 @@
 <meta name="apple-mobile-web-app-title" content="KulDhan">
 <meta name="theme-color" content="#1D9E75">
 <title>KulDhan — Family Vault</title>
-<!-- Tesseract JS Framework for Browser-Based OCR Scanning -->
-<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
@@ -56,9 +54,6 @@ a{color:var(--green);text-decoration:none}
 
 /* ── Pills / badges ── */
 .pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
-.pill-green{background:var(--green-light);color:var(--green-dark)}
-.pill-red{background:var(--red-light);color:#791F1F}
-.pill-amber{background:var(--amber-light);color:#633806}
 .pill-blue{background:var(--blue-light);color:#0C447C}
 
 .preview-box{width:100%;height:140px;border:1px dashed var(--border2);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fafafa;margin-bottom:12px;position:relative;cursor:pointer}
@@ -73,30 +68,21 @@ a{color:var(--green);text-decoration:none}
 </head>
 <body>
 
-<!-- Privacy modal (shows once) -->
+<!-- Privacy modal -->
 <div id="privacy-modal" style="display:none">
-  <div class="box">
+  <div class="box" style="background:#fff; padding:24px; border-radius:20px; max-width:440px; width:90%;">
     <div style="text-align:center;margin-bottom:18px">
       <div style="width:56px;height:56px;background:var(--green);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px">🔐</div>
-      <div style="font-size:20px;font-weight:800;margin-bottom:4px">Before you begin</div>
-      <div style="font-size:13px;color:var(--text3)">Please read — this is important</div>
+      <div style="font-size:20px;font-weight:800;margin-bottom:4px">Welcome to KulDhan</div>
+      <div style="font-size:13px;color:var(--text3)">Your completely local vault application</div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
-      <div style="display:flex;gap:10px;padding:10px 12px;background:#f5f4ef;border-radius:var(--r2)">
-        <span style="font-size:20px;flex-shrink:0">📱</span>
-        <div>
-          <div style="font-size:13px;font-weight:600;margin-bottom:2px">Your data stays on your device</div>
-          <div style="font-size:12px;color:var(--text2);line-height:1.5">All records are stored on your phone or computer only. KulDhan's servers store nothing about you.</div>
-        </div>
-      </div>
-    </div>
-    <button class="btn-primary" onclick="acceptPrivacy()">I understand — open my vault →</button>
+    <button class="btn-primary" onclick="acceptPrivacy()">Get Started →</button>
   </div>
 </div>
 
-<div id="drive-notice">Processing data vector constraints...</div>
+<div id="drive-notice">Notification space</div>
 
-<!-- Main app layout framework -->
+<!-- Main App Frame -->
 <div id="app">
   <div id="header">
     <h1><span class="logo">🔐</span> KulDhan <span class="tagline">— Family Vault</span></h1>
@@ -132,7 +118,7 @@ a{color:var(--green);text-decoration:none}
   </nav>
 </div>
 
-<!-- Input controls -->
+<!-- Inputs inputs outside DOM stream -->
 <input type="file" id="global-file-picker" accept="image/*" style="display:none" onchange="handleFileSelection(event)">
 <input type="file" id="import-json-picker" accept=".json,text/plain" style="display:none" onchange="importData(event)">
 
@@ -153,7 +139,6 @@ const RELATIONS = ['self','spouse','mother','father','son','daughter','brother',
 let DB = {};
 let currentPage = 'home';
 let currentMemberId = null;
-let currentHealthSection = null;
 let temporaryBase64Image = ""; 
 
 function loadDB() {
@@ -172,13 +157,6 @@ function saveDB() {
 
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
 function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function fmt(n) {
-  if (!n) return '';
-  n = Number(n);
-  if (n >= 10000000) return '₹' + (n/10000000).toFixed(2) + ' Cr';
-  if (n >= 100000) return '₹' + (n/100000).toFixed(2) + ' L';
-  return '₹' + n.toLocaleString('en-IN');
-}
 
 function acceptPrivacy() {
   localStorage.setItem(PRIVACY_KEY, '1');
@@ -193,7 +171,7 @@ function exportData() {
   a.download = 'kuldhan-backup-' + new Date().toISOString().slice(0,10) + '.json';
   a.click();
   URL.revokeObjectURL(url);
-  showDriveToast('Vault structural info backup downloaded!');
+  showDriveToast('Vault file backup package exported!');
 }
 
 function openImportPopup() {
@@ -204,7 +182,7 @@ function showDriveToast(msg) {
   const el = document.getElementById('drive-notice');
   el.textContent = msg;
   el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 4000);
+  setTimeout(() => el.classList.remove('show'), 3000);
 }
 
 function importData(e) {
@@ -215,7 +193,7 @@ function importData(e) {
     try {
       let dataText = ev.target.result;
       if (dataText.startsWith("SECURE-VAULT:")) {
-        const pin = prompt("Encrypted Vault File. Enter the secure 4-digit code:");
+        const pin = prompt("Encrypted backup. Enter security password key code:");
         if (!pin) return;
         dataText = xorCipher(dataText.replace("SECURE-VAULT:", ""), pin);
       }
@@ -224,14 +202,14 @@ function importData(e) {
         DB = data;
         saveDB();
         showPage(currentPage);
-        alert('Vault imported completely!');
+        alert('Vault package processed completely!');
       }
-    } catch { alert('Data verification parsing failure.'); }
+    } catch { alert('Data package structural parsing failure.'); }
   };
   reader.readAsText(file);
 }
 
-/* ── Hardware File Picker Downscaling ── */
+/* ── Local File Handling Framework ── */
 function triggerFilePicker() {
   document.getElementById('global-file-picker').click();
 }
@@ -240,7 +218,7 @@ function handleFileSelection(e) {
   const file = e.target.files[0];
   if (!file) return;
 
-  showDriveToast("Processing snapshot locally...");
+  showDriveToast("Downscaling thumbnail locally...");
   const reader = new FileReader();
   reader.onload = function(event) {
     const img = new Image();
@@ -248,7 +226,7 @@ function handleFileSelection(e) {
       const canvas = document.createElement('canvas');
       let width = img.width;
       let height = img.height;
-      const max_size = 800; 
+      const max_size = 400; 
 
       if (width > height) {
         if (width > max_size) { height *= max_size / width; width = max_size; }
@@ -265,47 +243,12 @@ function handleFileSelection(e) {
       
       const pContainer = document.getElementById('preview-container');
       if (pContainer) {
-        pContainer.innerHTML = `<img src="${temporaryBase64Image}">`;
+        pContainer.innerHTML = `<img src="${temporaryBase64Image}" style="width:100%; height:100%; object-fit:contain;">`;
       }
-      
-      runLocalOCR(temporaryBase64Image);
     };
     img.src = event.target.result;
   };
   reader.readAsDataURL(file);
-}
-
-function runLocalOCR(base64Data) {
-  const indicator = document.getElementById('ocr-status-indicator');
-  if (indicator) indicator.innerHTML = "⏳ Scanning document layout text...";
-
-  if (typeof Tesseract === 'undefined') {
-    if (indicator) indicator.innerHTML = "⚠️ Processing engine offline. Type manually.";
-    return;
-  }
-
-  Tesseract.recognize(base64Data, 'eng')
-    .then(({ data: { text } }) => {
-      if (indicator) indicator.innerHTML = "✅ Parsing complete! Review matches down below.";
-      
-      const ocrArea = document.getElementById('d-ocr-text');
-      if (ocrArea) {
-        ocrArea.value = text;
-        ocrArea.style.display = "block";
-        document.getElementById('ocr-box-lbl').style.display = "block";
-      }
-
-      const normalizedText = text.toLowerCase();
-      const titleInput = document.getElementById('d0');
-      if (titleInput && !titleInput.value) {
-        if (normalizedText.includes("pan") || normalizedText.includes("income tax")) titleInput.value = "PAN Card";
-        else if (normalizedText.includes("aadhaar") || normalizedText.includes("uidai")) titleInput.value = "Aadhaar Card";
-        else if (normalizedText.includes("policy") || normalizedText.includes("insurance")) titleInput.value = "Insurance Document";
-      }
-    })
-    .catch(() => {
-      if (indicator) indicator.innerHTML = "⚠️ Scan failed. Text workspace open for changes.";
-    });
 }
 
 function xorCipher(str, key) {
@@ -316,7 +259,7 @@ function xorCipher(str, key) {
   return output;
 }
 
-/* ── Sheets Control ── */
+/* ── Sheet Display Modals ── */
 function openSheet(title, html) {
   document.getElementById('sheet-body').innerHTML = `<div class="sheet-title">${esc(title)}</div>` + html;
   document.getElementById('sheet-overlay').classList.add('open');
@@ -329,12 +272,13 @@ function closeSheetDirect() {
   document.getElementById('sheet-overlay').classList.remove('open');
 }
 
-/* ── Navigation Routing Context ── */
+/* ── Navigation Hub Router ── */
 function showPage(page) {
   currentPage = page;
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   const nb = document.getElementById('nav-' + page);
   if (nb) nb.classList.add('active');
+  
   if (page === 'home') renderHome();
   else if (page === 'members') renderMembers();
   else if (page === 'health') renderHealthHome();
@@ -343,61 +287,59 @@ function showPage(page) {
 }
 
 /* ══════════════════════════════════════
-   HOME
+   HOME RENDER ENGINE
 ══════════════════════════════════════ */
 function renderHome() {
   const members = DB.members.length;
-  const insurance = DB.insurance.length;
-  const meds = DB.health ? Object.values(DB.health).reduce((s,m) => s + (m.medications||[]).filter(x=>x.is_current).length, 0) : 0;
   const docs = DB.docs.length;
   document.getElementById('content').innerHTML = `
     <div style="margin-bottom:18px">
       <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px">Good day 👋</div>
-      <div style="font-size:13px;color:var(--text3);margin-top:3px">KulDhan Vault Dashboard · Stored locally on this device</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:3px">KulDhan Vault Dashboard · Stored locally on device</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-      ${[
-        {icon:'👨‍👩‍👧‍👦',label:'Family members',val:members,page:'members',color:'var(--blue)'},
-        {icon:'🛡️',label:'Insurance policies',val:insurance,page:'finance',color:'var(--red)'},
-        {icon:'💊',label:'Active medications',val:meds,page:'health',color:'#D4537E'},
-        {icon:'📂',label:'Documents',val:docs,page:'docs',color:'#D85A30'},
-      ].map(c=>`
-        <div onclick="showPage('${c.page}')" style="background:var(--white);border:0.5px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer">
-          <div style="font-size:22px;margin-bottom:8px">${c.icon}</div>
-          <div style="font-size:22px;font-weight:800;color:${c.color}">${c.val}</div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px">${c.label}</div>
-        </div>`).join('')}
-    </div>
-    <div class="section-title">Quick actions</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div onclick="openShareSheet()" style="background:var(--white);border:0.5px solid var(--border);border-radius:var(--r2);padding:12px;cursor:pointer;display:flex;align-items:center;gap:8px">
-        <span style="font-size:18px">📤</span><span style="font-size:12px">Granular Secure Share</span>
+      <div onclick="showPage('members')" style="background:#fff; border:0.5px solid var(--border); border-radius:var(--r); padding:14px; cursor:pointer">
+        <div style="font-size:22px;margin-bottom:8px">👨‍👩‍👧‍👦</div>
+        <div style="font-size:22px;font-weight:800;color:var(--blue);">${members}</div>
+        <div style="font-size:12px;color:var(--text3);">Family members</div>
       </div>
+      <div onclick="showPage('docs')" style="background:#fff; border:0.5px solid var(--border); border-radius:var(--r); padding:14px; cursor:pointer">
+        <div style="font-size:22px;margin-bottom:8px">📂</div>
+        <div style="font-size:22px;font-weight:800;color:var(--amber);">${docs}</div>
+        <div style="font-size:12px;color:var(--text3);">Documents Vault</div>
+      </div>
+    </div>
+    <div class="section-title">Transfer Options</div>
+    <div onclick="openShareSheet()" style="background:#white; border:0.5px solid var(--border); border-radius:var(--r2); padding:12px; cursor:pointer; display:flex; align-items:center; gap:8px">
+      <span style="font-size:18px">📤</span><span style="font-size:12px">Granular Custom Sharing</span>
     </div>
   `;
 }
 
 /* ══════════════════════════════════════
-   FAMILY MEMBERS
+   FAMILY MANAGEMENT CORE
 ══════════════════════════════════════ */
 function renderMembers() {
   const members = DB.members;
   document.getElementById('content').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <div>
-        <div style="font-size:18px;font-weight:700">Family members</div>
+        <div style="font-size:18px;font-weight:700">Family Members</div>
         <div style="font-size:12px;color:var(--text3)">${members.length} member(s)</div>
       </div>
       <button onclick="showAddMemberSheet()" style="padding:8px 14px;background:var(--green);color:#fff;border-radius:var(--r2);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add</button>
     </div>
-    ${members.length === 0 ? `<div class="empty"><h3>No family members profiles created yet</h3></div>` : ''}
+    ${members.length === 0 ? '<div class="empty"><p>No member context layers created yet.</p></div>' : ''}
     ${members.map(m => `
-      <div class="card" onclick="showMemberDetail('${m.id}')" style="display:flex;align-items:center;gap:12px;cursor:pointer">
-        <div class="avatar" style="background:${m.color||'var(--green)'}">${(m.name||'M')[0]}</div>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:14px;font-weight:600">${esc(m.name)}</div>
-          <div style="font-size:12px;color:var(--text3)">${esc(m.relation||'')} ${m.blood_group ? '· <span style="color:var(--red);font-weight:600">'+esc(m.blood_group)+'</span>' : ''}</div>
+      <div class="card" onclick="showMemberDetail('${m.id}')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
+        <div style="display:flex; align-items:center; gap:12px;">
+          <div class="avatar" style="background:${m.color||'var(--green)'}">${(m.name||'M')[0]}</div>
+          <div>
+            <div style="font-size:14px;font-weight:600">${esc(m.name)}</div>
+            <div style="font-size:12px;color:var(--text3)">${esc(m.relation||'')} · <span style="color:var(--red); font-weight:600">${esc(m.blood_group||'Unknown')}</span></div>
+          </div>
         </div>
+        <button onclick="event.stopPropagation(); showAddMemberSheet('${m.id}')" style="background:none; color:var(--blue); font-size:12px; font-weight:600;">✏️ Edit</button>
       </div>`).join('')}
   `;
 }
@@ -405,55 +347,40 @@ function renderMembers() {
 function showAddMemberSheet(editId) {
   const m = editId ? DB.members.find(x=>x.id===editId) : null;
   const v = m || {};
-  openSheet(editId ? 'Edit member' : 'Add family member', `
-    <div class="field"><label class="lbl">Full name *</label><input class="inp" id="m-name" value="${esc(v.name||'')}" placeholder="e.g. Pankaj Kapote"></div>
+  openSheet(editId ? 'Modify Member Profile' : 'Add Family Profile', `
+    <div class="field"><label class="lbl">Full Name *</label><input class="inp" id="m-name" value="${esc(v.name||'')}"></div>
     <div class="grid2">
       <div class="field"><label class="lbl">Relation</label>
-        <select class="inp" id="m-rel">${RELATIONS.map(r=>`<option value="${r}" ${v.relation===r?'selected':''}>${r.charAt(0).toUpperCase()+r.slice(1)}</option>`).join('')}</select>
+        <select class="inp" id="m-rel">${RELATIONS.map(r=>`<option value="${r}" ${v.relation===r?'selected':''}>${r}</option>`).join('')}</select>
       </div>
-      <div class="field"><label class="lbl">Blood group</label>
+      <div class="field"><label class="lbl">Blood Type</label>
         <select class="inp" id="m-bg">${BLOOD_GROUPS.map(b=>`<option value="${b}" ${v.blood_group===b?'selected':''}>${b}</option>`).join('')}</select>
       </div>
     </div>
-    <div class="grid2">
-      <div class="field"><label class="lbl">Date of birth</label><input class="inp" type="date" id="m-dob" value="${esc(v.dob||'')}"></div>
-      <div class="field"><label class="lbl">Mobile</label><input class="inp" type="tel" id="m-mob" value="${esc(v.mobile||'')}" placeholder="98XXXXXXXX"></div>
-    </div>
     <input type="hidden" id="m-color" value="${esc(v.color||COLORS[0])}">
     <input type="hidden" id="m-editid" value="${editId||''}">
-    <div style="display:flex;gap:10px;margin-top:4px">
-      <button class="btn-primary" onclick="saveMember()">Save member</button>
-      ${editId ? `<button class="btn-danger" onclick="deleteMember('${editId}')">Delete</button>` : ''}
-    </div>
+    <button class="btn-primary" onclick="saveMember()" style="margin-top:8px;">Save Profile Context</button>
   `);
 }
 
 function saveMember() {
   const name = document.getElementById('m-name').value.trim();
-  if (!name) { alert('Name is required'); return; }
+  if (!name) { alert('Name field required.'); return; }
   const editId = document.getElementById('m-editid').value;
-  const member = {
+  const memberObj = {
     id: editId || uid(),
-    name, relation: document.getElementById('m-rel').value,
+    name,
+    relation: document.getElementById('m-rel').value,
     blood_group: document.getElementById('m-bg').value,
-    dob: document.getElementById('m-dob').value,
-    mobile: document.getElementById('m-mob').value,
     color: document.getElementById('m-color').value || COLORS[0]
   };
-  if (editId) {
-    const idx = DB.members.findIndex(m=>m.id===editId);
-    if (idx>=0) DB.members[idx] = member;
-  } else {
-    DB.members.push(member);
-  }
-  saveDB();
-  closeSheetDirect();
-  renderMembers();
-}
 
-function deleteMember(id) {
-  if (!confirm('Delete family profile object location completely?')) return;
-  DB.members = DB.members.filter(m=>m.id!==id);
+  if (editId) {
+    const idx = DB.members.findIndex(x=>x.id===editId);
+    if(idx>=0) DB.members[idx] = memberObj;
+  } else {
+    DB.members.push(memberObj);
+  }
   saveDB();
   closeSheetDirect();
   renderMembers();
@@ -463,19 +390,17 @@ function showMemberDetail(id) {
   const m = DB.members.find(x=>x.id===id);
   if (!m) return;
   openSheet(m.name, `
-    <div style="font-size:14px;margin-bottom:12px">Relation context: <strong>${esc(m.relation)}</strong></div>
-    <div style="font-size:14px;margin-bottom:12px">Blood Type: <strong style="color:var(--red)">${esc(m.blood_group)}</strong></div>
-    <div style="display:flex;gap:10px;margin-top:12px">
-      <button class="btn-secondary" onclick="showAddMemberSheet('${id}')">Modify Info Tag</button>
-    </div>
+    <div style="font-size:14px;margin-bottom:8px">Relation Context: <strong>${esc(m.relation)}</strong></div>
+    <div style="font-size:14px;margin-bottom:8px">Blood Type: <strong>${esc(m.blood_group)}</strong></div>
+    <button class="btn-secondary" onclick="showAddMemberSheet('${m.id}')" style="margin-top:8px;">Edit Info Tag</button>
   `);
 }
 
-function renderHealthHome() { document.getElementById('content').innerHTML = `<h3>Health Records Framework</h3>`; }
-function renderFinance() { document.getElementById('content').innerHTML = `<h3>Finance Configuration Module</h3>`; }
+function renderHealthHome() { document.getElementById('content').innerHTML = `<div class="card"><h3>Health Metrics Module</h3><p>Medical structural layers execute accurately inside specific family object cards updates safely.</p></div>`; }
+function renderFinance() { document.getElementById('content').innerHTML = `<div class="card"><h3>Finance & Policies Space</h3><p>Granular structural records parameters configurations stay here.</p></div>`; }
 
 /* ══════════════════════════════════════
-   DOCUMENTS (WITH BALANCED LIFE CYCLE TRACKS)
+   DOCUMENTS VAULT SYSTEM
 ══════════════════════════════════════ */
 function renderDocs() {
   const docs = DB.docs || [];
@@ -483,11 +408,11 @@ function renderDocs() {
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
       <div>
         <div style="font-size:18px;font-weight:700">Documents Vault</div>
-        <div style="font-size:12px;color:var(--text3)">${docs.length} tracking records</div>
+        <div style="font-size:12px;color:var(--text3)">${docs.length} saved tracking file records</div>
       </div>
       <button onclick="showAddDocSheet()" style="padding:8px 14px;background:var(--green);color:#fff;border-radius:var(--r2);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add Doc</button>
     </div>
-    ${docs.length===0?'<div class="empty">No document profiles found inside local vault database storage.</div>':''}
+    ${docs.length===0?'<div class="empty"><p>No document structures found inside local storage vault framework.</p></div>':''}
     ${docs.map((d,i)=>renderDocCard(d,i)).join('')}
   `;
 }
@@ -497,20 +422,20 @@ function renderDocCard(d, i) {
     <div class="card" style="border-left:4px solid var(--green); position:relative;">
       <div style="display:flex; justify-content:space-between; align-items:flex-start;">
         <div>
-          <div style="font-size:14px;font-weight:700;color:var(--text);">${esc(d.name)} <span class="pill pill-blue" style="font-size:10px;">${esc(d.category)}</span></div>
-          <div style="font-size:12px;color:var(--text3);margin-top:2px;">Vault Context Target: ${esc(d.member || 'All')}</div>
+          <div style="font-size:14px;font-weight:700;">${esc(d.name)} <span class="pill pill-blue" style="font-size:10px; padding:2px 6px;">${esc(d.category)}</span></div>
+          <div style="font-size:12px;color:var(--text3);margin-top:3px;">Assigned to: ${esc(d.member || 'All')}</div>
         </div>
-        <div style="display:flex;gap:10px;">
-          <button onclick="showAddDocSheet('${d.id}')" style="background:none;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;">✏️ Edit</button>
-          <button onclick="deleteDoc(${i})" style="background:none;color:var(--text4);font-size:16px;cursor:pointer;">×</button>
+        <div style="display:flex; gap:10px;">
+          <button onclick="showAddDocSheet('${d.id}')" style="background:none; color:var(--blue); font-size:12px; font-weight:600; cursor:pointer;">✏️ Edit</button>
+          <button onclick="deleteDoc(${i})" style="background:none; color:var(--text4); font-size:16px; cursor:pointer;">×</button>
         </div>
       </div>
       
-      ${d.drive_link ? `<div style="margin-top:6px;font-size:11px;"><a href="${esc(d.drive_link)}" target="_blank" style="color:var(--blue);text-decoration:underline;">☁️ Open High-Res Google Drive Source</a></div>` : ''}
+      ${d.drive_link ? `<div style="margin-top:6px; font-size:11px;"><a href="${esc(d.drive_link)}" target="_blank" style="color:var(--blue); text-decoration:underline;">☁️ View Full Cloud File Source</a></div>` : ''}
       
       ${d.local_img ? `
-        <div style="margin-top:10px;text-align:center;background:#fafafa;padding:6px;border-radius:var(--r3);border:0.5px solid var(--border2)">
-          <img src="${d.local_img}" style="max-width:100%;max-height:120px;object-fit:contain;border-radius:4px;">
+        <div style="margin-top:10px; text-align:center; background:#fafafa; padding:8px; border-radius:var(--r3); border:0.5px solid var(--border2)">
+          <img src="${d.local_img}" style="max-width:100%; max-height:120px; object-fit:contain; border-radius:4px;">
         </div>
       ` : ''}
     </div>
@@ -522,21 +447,20 @@ function showAddDocSheet(editId) {
   const v = d || {};
   temporaryBase64Image = v.local_img || "";
 
-  openSheet(editId ? 'Modify Document Properties' : 'Scan Family Vault Document', `
+  openSheet(editId ? 'Modify Document Information' : 'Attach Document Frame', `
     <div class="field">
-      <label class="lbl">Camera Snapshot / Local Attachment File</label>
+      <label class="lbl">Camera Snapshot / Local Attachment File Preview</label>
       <div class="preview-box" id="preview-container" onclick="triggerFilePicker()">
-        ${temporaryBase64Image ? `<img src="${temporaryBase64Image}">` : `<span style="color:var(--text3);font-size:12px;">📸 Tap to update file capture interface</span>`}
+        ${temporaryBase64Image ? `<img src="${temporaryBase64Image}">` : `<span style="color:var(--text3);font-size:12px;">📸 Tap to snap photo or select image asset file</span>`}
       </div>
-      <div id="ocr-status-indicator" style="font-size:11px;font-weight:600;color:var(--green);margin-top:4px;"></div>
     </div>
 
     <div class="field">
-      <label class="lbl">Google Drive High-Res File URL</label>
-      <input class="inp" id="d-link" value="${esc(v.drive_link||'')}" placeholder="Paste shared link configuration reference here">
+      <label class="lbl">Google Drive / Secure Cloud High-Res Link</label>
+      <input class="inp" id="d-link" value="${esc(v.drive_link||'')}" placeholder="Paste file reference tracking URL link here">
     </div>
 
-    <div class="field"><label class="lbl">Document Name *</label><input class="inp" id="d0" value="${esc(v.name||'')}" placeholder="e.g. Health Card / PAN Card"></div>
+    <div class="field"><label class="lbl">Document Name Tag Tag *</label><input class="inp" id="d0" value="${esc(v.name||'')}" placeholder="e.g. Health Plan Card / Identity Card"></div>
     <div class="grid2">
       <div class="field"><label class="lbl">Category</label>
         <select class="inp" id="d1">
@@ -547,27 +471,22 @@ function showAddDocSheet(editId) {
           <option value="other" ${v.category==='other'?'selected':''}>Other</option>
         </select>
       </div>
-      <div class="field"><label class="lbl">Vault Assignment</label>
+      <div class="field"><label class="lbl">Family Allocation</label>
         <select class="inp" id="d2">
-          <option value="">All Family Contexts</option>
+          <option value="">All Contexts</option>
           ${DB.members.map(m=>`<option value="${esc(m.name)}" ${v.member===m.name?'selected':''}>${esc(m.name)}</option>`).join('')}
         </select>
       </div>
     </div>
-    
-    <div class="field">
-      <label class="lbl" id="ocr-box-lbl" style="${v.ocr_text?'':'display:none;'}">📝 Scanned OCR Text Analysis Metadata Panel:</label>
-      <textarea class="inp" id="d-ocr-text" rows="3" style="${v.ocr_text?'':'display:none;'}font-size:12px;background:#fcfcfc;">${esc(v.ocr_text||'')}</textarea>
-    </div>
 
     <input type="hidden" id="d-editid" value="${editId||''}">
-    <button class="btn-primary" onclick="saveDoc()" style="margin-top:10px;">Save Data Parameters</button>
+    <button class="btn-primary" onclick="saveDoc()" style="margin-top:10px;">Save Changes Matrix</button>
   `);
 }
 
 function saveDoc() {
   const g = id => (document.getElementById(id)||{}).value || '';
-  if (!g('d0')) { alert('Identification title tag needed.'); return; }
+  if (!g('d0')) { alert('Title naming field required.'); return; }
   
   const editId = document.getElementById('d-editid').value;
   const docObj = {
@@ -576,7 +495,6 @@ function saveDoc() {
     category: g('d1'),
     member: g('d2'),
     drive_link: g('d-link'),
-    ocr_text: g('d-ocr-text'),
     local_img: temporaryBase64Image
   };
 
@@ -593,20 +511,20 @@ function saveDoc() {
 }
 
 function deleteDoc(i) {
-  if(!confirm('Purge target data row location?')) return;
+  if(!confirm('Delete selected asset reference completely?')) return;
   DB.docs.splice(i,1);
   saveDB();
   renderDocs();
 }
 
 /* ══════════════════════════════════════
-   GRANULAR DATA EXPORT CONTROLS
+   GRANULAR DATA EXPORT SCREEN
 ══════════════════════════════════════ */
 function openShareSheet() {
-  openSheet('Granular Secure Share Selection', `
-    <div class="notice notice-amber" style="font-size:12px;">Toggle checkboxes below to build your sealed transfer package.</div>
-    <div class="scope-row"><input type="checkbox" id="sc-members" checked><label for="sc-members">Profile Identities Parameters</label></div>
-    <div class="scope-row"><input type="checkbox" id="sc-docs" checked><label for="sc-docs">Documents & Thumbnail Objects</label></div>
+  openSheet('Granular Data Share Options', `
+    <div class="notice notice-amber" style="font-size:12px;">Toggle checkbox options explicitly to package target vault configurations safely.</div>
+    <div class="scope-row"><input type="checkbox" id="sc-members" checked><label for="sc-members">Profile Profiles Parameters</label></div>
+    <div class="scope-row"><input type="checkbox" id="sc-docs" checked><label for="sc-docs">Documents Reference Objects & Images</label></div>
     <div style="margin-top:18px;"><button class="btn-primary" onclick="processGranularPackage()">Compile Sealed Export Package</button></div>
   `);
 }
@@ -617,9 +535,9 @@ function processGranularPackage() {
   if (document.getElementById('sc-docs').checked) exportScope.docs = DB.docs;
   exportScope.sos = DB.sos;
 
-  const pin = prompt("Create a new 4-digit security key lock sequence code:");
+  const pin = prompt("Create a simple 4-digit verification secure password key code to seal this data:");
   if (!pin || pin.length < 4) {
-    alert("Invalid entry length parameters.");
+    alert("Invalid entry key requirements.");
     return;
   }
 
@@ -628,15 +546,15 @@ function processGranularPackage() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'kuldhan-vault-subset-' + new Date().toISOString().slice(0,10) + '.txt';
+  a.download = 'kuldhan-vault-package-' + new Date().toISOString().slice(0,10) + '.txt';
   a.click();
   URL.revokeObjectURL(url);
   closeSheetDirect();
-  showDriveToast("Encrypted localized matrix file packages created!");
+  showDriveToast("Encrypted file compiled successfully!");
 }
 
 /* ══════════════════════════════════════
-   INITIALIZATION
+   INITIALIZATION ROUTINE RUNNERS
 ══════════════════════════════════════ */
 loadDB();
 if (!localStorage.getItem(PRIVACY_KEY)) {
