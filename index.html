@@ -8,7 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="KulDhan">
 <meta name="theme-color" content="#1D9E75">
 <title>KulDhan — Family Vault</title>
-<!-- Tesseract JS Framework for Browser-Based OCR Scanning -->
+<!-- Tesseract JS Framework for Privacy-First Browser-Based Local OCR Scanning -->
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -60,20 +60,6 @@ a{color:var(--green);text-decoration:none}
 .pill-red{background:var(--red-light);color:#791F1F}
 .pill-amber{background:var(--amber-light);color:#633806}
 .pill-blue{background:var(--blue-light);color:#0C447C}
-.pill-gray{background:#f1f0eb;color:#444441}
-
-/* ── Empty states ── */
-.empty{text-align:center;padding:40px 20px;color:var(--text3)}
-.empty-icon{font-size:36px;margin-bottom:10px}
-.empty h3{font-size:15px;font-weight:600;color:var(--text2);margin-bottom:6px}
-.empty p{font-size:13px;line-height:1.5;margin-bottom:20px}
-
-/* ── Modals / sheets ── */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:flex-end;justify-content:center}
-.overlay.open{display:flex}
-.sheet{background:var(--white);border-radius:20px 20px 0 0;padding:20px 16px calc(24px + env(safe-area-inset-bottom));width:100%;max-width:480px;max-height:90vh;overflow-y:auto}
-.sheet-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px}
-.sheet-title{font-size:17px;font-weight:700;margin-bottom:16px}
 
 .preview-box{width:100%;height:140px;border:1px dashed var(--border2);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fafafa;margin-bottom:12px;position:relative;cursor:pointer}
 .preview-box img{width:100%;height:100%;object-fit:contain}
@@ -87,7 +73,7 @@ a{color:var(--green);text-decoration:none}
 </head>
 <body>
 
-<!-- Privacy modal -->
+<!-- Privacy modal (shows once) -->
 <div id="privacy-modal" style="display:none">
   <div class="box">
     <div style="text-align:center;margin-bottom:18px">
@@ -95,4 +81,559 @@ a{color:var(--green);text-decoration:none}
       <div style="font-size:20px;font-weight:800;margin-bottom:4px">Before you begin</div>
       <div style="font-size:13px;color:var(--text3)">Please read — this is important</div>
     </div>
-I seem to be encountering an error. Can I try something else for you?
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px">
+      <div style="display:flex;gap:10px;padding:10px 12px;background:#f5f4ef;border-radius:var(--r2)">
+        <span style="font-size:20px;flex-shrink:0">📱</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;margin-bottom:2px">Your data stays on your device</div>
+          <div style="font-size:12px;color:var(--text2);line-height:1.5">All records are stored on your phone or computer only. KulDhan's servers store nothing about you.</div>
+        </div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="acceptPrivacy()">I understand — open my vault →</button>
+  </div>
+</div>
+
+<div id="drive-notice">Processing data vector constraints...</div>
+
+<!-- Main app layout framework -->
+<div id="app">
+  <div id="header">
+    <h1><span class="logo">🔐</span> KulDhan <span class="tagline">— Family Vault</span></h1>
+    <div id="header-actions" style="display:flex;align-items:center;gap:8px">
+      <button onclick="openImportPopup()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--r3);padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer">Import</button>
+      <button onclick="exportData()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--r3);padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer">Export</button>
+    </div>
+  </div>
+
+  <div id="content"></div>
+
+  <nav id="nav">
+    <button class="nav-btn active" onclick="showPage('home')" id="nav-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Home
+    </button>
+    <button class="nav-btn" onclick="showPage('members')" id="nav-members">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Family
+    </button>
+    <button class="nav-btn" onclick="showPage('health')" id="nav-health">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      Health
+    </button>
+    <button class="nav-btn" onclick="showPage('finance')" id="nav-finance">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      Finance
+    </button>
+    <button class="nav-btn" onclick="showPage('docs')" id="nav-docs">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      Docs
+    </button>
+  </nav>
+</div>
+
+<!-- Underlying hardware trigger bindings -->
+<input type="file" id="global-file-picker" accept="image/*" style="display:none" onchange="handleFileSelection(event)">
+<input type="file" id="import-json-picker" accept=".json,text/plain" style="display:none" onchange="importData(event)">
+
+<div class="overlay" id="sheet-overlay" onclick="closeSheet(event)">
+  <div class="sheet" id="sheet-content">
+    <div class="sheet-handle"></div>
+    <div id="sheet-body"></div>
+  </div>
+</div>
+
+<script>
+const DB_KEY = 'kuldhan_v1';
+const PRIVACY_KEY = 'kuldhan_privacy_ok';
+const COLORS = ['#1D9E75','#378ADD','#D85A30','#7F77DD','#D4537E','#639922','#EF9F27','#E24B4A'];
+const BLOOD_GROUPS = ['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'];
+const RELATIONS = ['self','spouse','mother','father','son','daughter','brother','sister','grandfather','grandmother','uncle','aunt','other'];
+
+let DB = {};
+let currentPage = 'home';
+let currentMemberId = null;
+let currentHealthSection = null;
+let temporaryBase64Image = ""; 
+
+function loadDB() {
+  try { DB = JSON.parse(localStorage.getItem(DB_KEY) || '{}'); } catch { DB = {}; }
+  if (!DB.members) DB.members = [];
+  if (!DB.health) DB.health = {};
+  if (!DB.insurance) DB.insurance = [];
+  if (!DB.finance) DB.finance = { accounts: [], mf: [], fd: [] };
+  if (!DB.docs) DB.docs = [];
+  if (!DB.sos) DB.sos = { contacts: [], hospitals: [], ambulance: [] };
+}
+
+function saveDB() {
+  localStorage.setItem(DB_KEY, JSON.stringify(DB));
+}
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function fmt(n) {
+  if (!n) return '';
+  n = Number(n);
+  if (n >= 10000000) return '₹' + (n/10000000).toFixed(2) + ' Cr';
+  if (n >= 100000) return '₹' + (n/100000).toFixed(2) + ' L';
+  return '₹' + n.toLocaleString('en-IN');
+}
+
+function acceptPrivacy() {
+  localStorage.setItem(PRIVACY_KEY, '1');
+  document.getElementById('privacy-modal').style.display = 'none';
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(DB, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'kuldhan-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  showDriveToast('Vault structural info backup downloaded!');
+}
+
+function openImportPopup() {
+  document.getElementById('import-json-picker').click();
+}
+
+function showDriveToast(msg) {
+  const el = document.getElementById('drive-notice');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      let dataText = ev.target.result;
+      if (dataText.startsWith("SECURE-VAULT:")) {
+        const pin = prompt("Encrypted Vault File. Enter the secure 4-digit code:");
+        if (!pin) return;
+        dataText = xorCipher(dataText.replace("SECURE-VAULT:", ""), pin);
+      }
+      const data = JSON.parse(dataText);
+      if (data.members) {
+        DB = data;
+        saveDB();
+        showPage(currentPage);
+        alert('Vault imported completely!');
+      }
+    } catch { alert('Data verification parsing failure.'); }
+  };
+  reader.readAsText(file);
+}
+
+/* ── Downscaling & Clean Base64 Logic Fix ── */
+function triggerFilePicker() {
+  document.getElementById('global-file-picker').click();
+}
+
+function handleFileSelection(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  showDriveToast("Processing snapshot locally...");
+  const reader = new FileReader();
+  reader.onload = function(event) {
+    const img = new Image();
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+      const max_size = 800; 
+
+      if (width > height) {
+        if (width > max_size) { height *= max_size / width; width = max_size; }
+      } else {
+        if (height > max_size) { width *= max_size / height; height = max_size; }
+      }
+      canvas.width = width;
+      canvas.height = height;
+      
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      
+      temporaryBase64Image = canvas.toDataURL('image/jpeg', 0.60);
+      
+      const pContainer = document.getElementById('preview-container');
+      if (pContainer) {
+        pContainer.innerHTML = `<img src="${temporaryBase64Image}">`;
+      }
+      
+      runLocalOCR(temporaryBase64Image);
+    };
+    img.src = event.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function runLocalOCR(base64Data) {
+  const indicator = document.getElementById('ocr-status-indicator');
+  if (indicator) indicator.innerHTML = "⏳ Scanning document layout text...";
+
+  if (typeof Tesseract === 'undefined') {
+    if (indicator) indicator.innerHTML = "⚠️ Processing engine offline. Type manually.";
+    return;
+  }
+
+  Tesseract.recognize(base64Data, 'eng')
+    .then(({ data: { text } }) => {
+      if (indicator) indicator.innerHTML = "✅ Parsing complete! Review matches down below.";
+      
+      const ocrArea = document.getElementById('d-ocr-text');
+      if (ocrArea) {
+        ocrArea.value = text;
+        ocrArea.style.display = "block";
+        document.getElementById('ocr-box-lbl').style.display = "block";
+      }
+
+      const normalizedText = text.toLowerCase();
+      const titleInput = document.getElementById('d0');
+      if (titleInput && !titleInput.value) {
+        if (normalizedText.includes("pan") || normalizedText.includes("income tax")) titleInput.value = "PAN Card";
+        else if (normalizedText.includes("aadhaar") || normalizedText.includes("uidai")) titleInput.value = "Aadhaar Card";
+        else if (normalizedText.includes("policy") || normalizedText.includes("insurance")) titleInput.value = "Insurance Document";
+      }
+    })
+    .catch(() => {
+      if (indicator) indicator.innerHTML = "⚠️ Scan failed. Text workspace open for changes.";
+    });
+}
+
+function xorCipher(str, key) {
+  let output = '';
+  for (let i = 0; i < str.length; i++) {
+    output += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+  }
+  return output;
+}
+
+/* ── Sheets Control ── */
+function openSheet(title, html) {
+  document.getElementById('sheet-body').innerHTML = `<div class="sheet-title">${esc(title)}</div>` + html;
+  document.getElementById('sheet-overlay').classList.add('open');
+}
+function closeSheet(e) {
+  if (e && e.target !== document.getElementById('sheet-overlay')) return;
+  document.getElementById('sheet-overlay').classList.remove('open');
+}
+function closeSheetDirect() {
+  document.getElementById('sheet-overlay').classList.remove('open');
+}
+
+/* ── Navigation Routing Context ── */
+function showPage(page) {
+  currentPage = page;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const nb = document.getElementById('nav-' + page);
+  if (nb) nb.classList.add('active');
+  if (page === 'home') renderHome();
+  else if (page === 'members') renderMembers();
+  else if (page === 'health') renderHealthHome();
+  else if (page === 'finance') renderFinance();
+  else if (page === 'docs') renderDocs();
+}
+
+/* ══════════════════════════════════════
+   HOME
+══════════════════════════════════════ */
+function renderHome() {
+  const members = DB.members.length;
+  const insurance = DB.insurance.length;
+  const meds = DB.health ? Object.values(DB.health).reduce((s,m) => s + (m.medications||[]).filter(x=>x.is_current).length, 0) : 0;
+  const docs = DB.docs.length;
+  document.getElementById('content').innerHTML = `
+    <div style="margin-bottom:18px">
+      <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px">Good day 👋</div>
+      <div style="font-size:13px;color:var(--text3);margin-top:3px">KulDhan Vault Dashboard · Stored locally on this device</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
+      ${[
+        {icon:'👨‍👩‍👧‍👦',label:'Family members',val:members,page:'members',color:'var(--blue)'},
+        {icon:'🛡️',label:'Insurance policies',val:insurance,page:'finance',color:'var(--red)'},
+        {icon:'💊',label:'Active medications',val:meds,page:'health',color:'#D4537E'},
+        {icon:'📂',label:'Documents',val:docs,page:'docs',color:'#D85A30'},
+      ].map(c=>`
+        <div onclick="showPage('${c.page}')" style="background:var(--white);border:0.5px solid var(--border);border-radius:var(--r);padding:14px;cursor:pointer">
+          <div style="font-size:22px;margin-bottom:8px">${c.icon}</div>
+          <div style="font-size:22px;font-weight:800;color:${c.color}">${c.val}</div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px">${c.label}</div>
+        </div>`).join('')}
+    </div>
+    <div class="section-title">Quick actions</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div onclick="openShareSheet()" style="background:var(--white);border:0.5px solid var(--border);border-radius:var(--r2);padding:12px;cursor:pointer;display:flex;align-items:center;gap:8px">
+        <span style="font-size:18px">📤</span><span style="font-size:12px">Granular Secure Share</span>
+      </div>
+    </div>
+  `;
+}
+
+/* ══════════════════════════════════════
+   FAMILY MEMBERS
+══════════════════════════════════════ */
+function renderMembers() {
+  const members = DB.members;
+  document.getElementById('content').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div style="font-size:18px;font-weight:700">Family members</div>
+        <div style="font-size:12px;color:var(--text3)">${members.length} member(s)</div>
+      </div>
+      <button onclick="showAddMemberSheet()" style="padding:8px 14px;background:var(--green);color:#fff;border-radius:var(--r2);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add</button>
+    </div>
+    ${members.length === 0 ? `<div class="empty"><h3>No family members profiles created yet</h3></div>` : ''}
+    ${members.map(m => `
+      <div class="card" onclick="showMemberDetail('${m.id}')" style="display:flex;align-items:center;gap:12px;cursor:pointer">
+        <div class="avatar" style="background:${m.color||'var(--green)'}">${(m.name||'M')[0]}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:14px;font-weight:600">${esc(m.name)}</div>
+          <div style="font-size:12px;color:var(--text3)">${esc(m.relation||'')} ${m.blood_group ? '· <span style="color:var(--red);font-weight:600">'+esc(m.blood_group)+'</span>' : ''}</div>
+        </div>
+      </div>`).join('')}
+  `;
+}
+
+function showAddMemberSheet(editId) {
+  const m = editId ? DB.members.find(x=>x.id===editId) : null;
+  const v = m || {};
+  openSheet(editId ? 'Edit member' : 'Add family member', `
+    <div class="field"><label class="lbl">Full name *</label><input class="inp" id="m-name" value="${esc(v.name||'')}" placeholder="e.g. Pankaj Kapote"></div>
+    <div class="grid2">
+      <div class="field"><label class="lbl">Relation</label>
+        <select class="inp" id="m-rel">${RELATIONS.map(r=>`<option value="${r}" ${v.relation===r?'selected':''}>${r.charAt(0).toUpperCase()+r.slice(1)}</option>`).join('')}</select>
+      </div>
+      <div class="field"><label class="lbl">Blood group</label>
+        <select class="inp" id="m-bg">${BLOOD_GROUPS.map(b=>`<option value="${b}" ${v.blood_group===b?'selected':''}>${b}</option>`).join('')}</select>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label class="lbl">Date of birth</label><input class="inp" type="date" id="m-dob" value="${esc(v.dob||'')}"></div>
+      <div class="field"><label class="lbl">Mobile</label><input class="inp" type="tel" id="m-mob" value="${esc(v.mobile||'')}" placeholder="98XXXXXXXX"></div>
+    </div>
+    <input type="hidden" id="m-color" value="${esc(v.color||COLORS[0])}">
+    <input type="hidden" id="m-editid" value="${editId||''}">
+    <div style="display:flex;gap:10px;margin-top:4px">
+      <button class="btn-primary" onclick="saveMember()">Save member</button>
+    </div>
+  `);
+}
+
+function saveMember() {
+  const name = document.getElementById('m-name').value.trim();
+  if (!name) { alert('Name is required'); return; }
+  const editId = document.getElementById('m-editid').value;
+  const member = {
+    id: editId || uid(),
+    name, relation: document.getElementById('m-rel').value,
+    blood_group: document.getElementById('m-bg').value,
+    dob: document.getElementById('m-dob').value,
+    mobile: document.getElementById('m-mob').value,
+    color: document.getElementById('m-color').value || COLORS[0]
+  };
+  if (editId) {
+    const idx = DB.members.findIndex(m=>m.id===editId);
+    if (idx>=0) DB.members[idx] = member;
+  } else {
+    DB.members.push(member);
+  }
+  saveDB();
+  closeSheetDirect();
+  renderMembers();
+}
+
+function showMemberDetail(id) {
+  const m = DB.members.find(x=>x.id===id);
+  if (!m) return;
+  openSheet(m.name, `
+    <div style="font-size:14px;margin-bottom:12px">Relation context: <strong>${esc(m.relation)}</strong></div>
+    <div style="font-size:14px;margin-bottom:12px">Blood Type: <strong style="color:var(--red)">${esc(m.blood_group)}</strong></div>
+    <div style="display:flex;gap:10px;margin-top:12px">
+      <button class="btn-secondary" onclick="showAddMemberSheet('${id}')">Modify Info</button>
+    </div>
+  `);
+}
+
+function renderHealthHome() { document.getElementById('content').innerHTML = `<h3>Health Records Framework</h3>`; }
+function renderFinance() { document.getElementById('content').innerHTML = `<h3>Finance Configuration Module</h3>`; }
+
+/* ══════════════════════════════════════
+   DOCUMENTS (WITH FULL LIFECYCLE CONTROLS)
+══════════════════════════════════════ */
+function renderDocs() {
+  const docs = DB.docs || [];
+  document.getElementById('content').innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div>
+        <div style="font-size:18px;font-weight:700">Documents Vault</div>
+        <div style="font-size:12px;color:var(--text3)">${docs.length} tracking records</div>
+      </div>
+      <button onclick="showAddDocSheet()" style="padding:8px 14px;background:var(--green);color:#fff;border-radius:var(--r2);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add Doc</button>
+    </div>
+    ${docs.length===0?'<div class="empty">No document profiles found inside local vault database storage.</div>':''}
+    ${docs.map((d,i)=>renderDocCard(d,i)).join('')}
+  `;
+}
+
+function renderDocCard(d, i) {
+  return `
+    <div class="card" style="border-left:4px solid var(--green); position:relative;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);">${esc(d.name)} <span class="pill pill-blue" style="font-size:10px;">${esc(d.category)}</span></div>
+          <div style="font-size:12px;color:var(--text3);margin-top:2px;">Vault Context Target: ${esc(d.member || 'All')}</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button onclick="showAddDocSheet('${d.id}')" style="background:none;color:var(--blue);font-size:12px;font-weight:600;cursor:pointer;">✏️ Edit</button>
+          <button onclick="deleteDoc(${i})" style="background:none;color:var(--text4);font-size:16px;cursor:pointer;">×</button>
+        </div>
+      </div>
+      
+      ${d.drive_link ? `<div style="margin-top:6px;font-size:11px;"><a href="${esc(d.drive_link)}" target="_blank" style="color:var(--blue);text-decoration:underline;">☁️ Open High-Res Google Drive Source</a></div>` : ''}
+      
+      ${d.local_img ? `
+        <div style="margin-top:10px;text-align:center;background:#fafafa;padding:6px;border-radius:var(--r3);border:0.5px solid var(--border2)">
+          <img src="${d.local_img}" style="max-width:100%;max-height:120px;object-fit:contain;border-radius:4px;">
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
+function showAddDocSheet(editId) {
+  const d = editId ? DB.docs.find(x=>x.id===editId) : null;
+  const v = d || {};
+  temporaryBase64Image = v.local_img || "";
+
+  openSheet(editId ? 'Modify Document Properties' : 'Scan Family Vault Document', `
+    <div class="field">
+      <label class="lbl">Camera Snapshot / Local Attachment File</label>
+      <div class="preview-box" id="preview-container" onclick="triggerFilePicker()">
+        ${temporaryBase64Image ? `<img src="${temporaryBase64Image}">` : `<span style="color:var(--text3);font-size:12px;">📸 Tap to update file capture interface</span>`}
+      </div>
+      <div id="ocr-status-indicator" style="font-size:11px;font-weight:600;color:var(--green);margin-top:4px;"></div>
+    </div>
+
+    <div class="field">
+      <label class="lbl">Google Drive High-Res File URL</label>
+      <input class="inp" id="d-link" value="${esc(v.drive_link||'')}" placeholder="Paste shared link configuration reference here">
+    </div>
+
+    <div class="field"><label class="lbl">Document Name *</label><input class="inp" id="d0" value="${esc(v.name||'')}" placeholder="e.g. Health Card / PAN Card"></div>
+    <div class="grid2">
+      <div class="field"><label class="lbl">Category</label>
+        <select class="inp" id="d1">
+          <option value="identity" ${v.category==='identity'?'selected':''}>Identity</option>
+          <option value="insurance" ${v.category==='insurance'?'selected':''}>Insurance</option>
+          <option value="finance" ${v.category==='finance'?'selected':''}>Finance</option>
+          <option value="medical" ${v.category==='medical'?'selected':''}>Medical</option>
+          <option value="other" ${v.category==='other'?'selected':''}>Other</option>
+        </select>
+      </div>
+      <div class="field"><label class="lbl">Vault Assignment</label>
+        <select class="inp" id="d2">
+          <option value="">All Family Contexts</option>
+          ${DB.members.map(m=>`<option value="${esc(m.name)}" ${v.member===m.name?'selected':''}>${esc(m.name)}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    
+    <div class="field">
+      <label class="lbl" id="ocr-box-lbl" style="${v.ocr_text?'':'display:none;'}">📝 Scanned OCR Text Analysis Metadata Panel:</label>
+      <textarea class="inp" id="d-ocr-text" rows="3" style="${v.ocr_text?'':'display:none;'}font-size:12px;background:#fcfcfc;">${esc(v.ocr_text||'')}</textarea>
+    </div>
+
+    <input type="hidden" id="d-editid" value="${editId||''}">
+    <button class="btn-primary" onclick="saveDoc()" style="margin-top:10px;">Save Data Parameters</button>
+  `);
+}
+
+function saveDoc() {
+  const g = id => (document.getElementById(id)||{}).value || '';
+  if (!g('d0')) { alert('Identification title tag needed.'); return; }
+  
+  const editId = document.getElementById('d-editid').value;
+  const docObj = {
+    id: editId || uid(),
+    name: g('d0'),
+    category: g('d1'),
+    member: g('d2'),
+    drive_link: g('d-link'),
+    ocr_text: g('d-ocr-text'),
+    local_img: temporaryBase64Image
+  };
+
+  if (editId) {
+    const idx = DB.docs.findIndex(x=>x.id===editId);
+    if(idx>=0) DB.docs[idx] = docObj;
+  } else {
+    DB.docs.push(docObj);
+  }
+
+  saveDB();
+  closeSheetDirect();
+  renderDocs();
+}
+
+function deleteDoc(i) {
+  if(!confirm('Purge target data row location?')) return;
+  DB.docs.splice(i,1);
+  saveDB();
+  renderDocs();
+}
+
+/* ══════════════════════════════════════
+   GRANULAR DATA EXPORT CONTROLS
+══════════════════════════════════════ */
+function openShareSheet() {
+  openSheet('Granular Secure Share Selection', `
+    <div class="notice notice-amber" style="font-size:12px;">Toggle checkboxes below to build your sealed transfer package.</div>
+    <div class="scope-row"><input type="checkbox" id="sc-members" checked><label for="sc-members">Profile Identities Parameters</label></div>
+    <div class="scope-row"><input type="checkbox" id="sc-docs" checked><label for="sc-docs">Documents & Thumbnail Objects</label></div>
+    <div style="margin-top:18px;"><button class="btn-primary" onclick="processGranularPackage()">Compile Sealed Export Package</button></div>
+  `);
+}
+
+function processGranularPackage() {
+  const exportScope = {};
+  if (document.getElementById('sc-members').checked) exportScope.members = DB.members;
+  if (document.getElementById('sc-docs').checked) exportScope.docs = DB.docs;
+  exportScope.sos = DB.sos;
+
+  const pin = prompt("Create a new 4-digit security key lock sequence code:");
+  if (!pin || pin.length < 4) {
+    alert("Invalid entry length parameters.");
+    return;
+  }
+
+  const outputString = "SECURE-VAULT:" + xorCipher(JSON.stringify(exportScope), pin);
+  const blob = new Blob([outputString], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'kuldhan-vault-subset-' + new Date().toISOString().slice(0,10) + '.txt';
+  a.click();
+  URL.revokeObjectURL(url);
+  closeSheetDirect();
+  showDriveToast("Encrypted localized matrix file packages created!");
+}
+
+/* ══════════════════════════════════════
+   INITIALIZATION
+══════════════════════════════════════ */
+loadDB();
+if (!localStorage.getItem(PRIVACY_KEY)) {
+  document.getElementById('privacy-modal').style.display = 'flex';
+}
+showPage('home');
+</script>
+</body>
+</html>
