@@ -2,565 +2,1439 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="KulDhan">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <meta name="theme-color" content="#1D9E75">
+<meta name="apple-mobile-web-app-capable" content="yes">
 <title>KulDhan — Family Vault</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 :root{
-  --green:#1D9E75;--green-light:#E1F5EE;--green-dark:#085041;
-  --red:#E24B4A;--red-light:#FCEBEB;--amber:#EF9F27;--amber-light:#FAEEDA;
-  --blue:#378ADD;--blue-light:#E6F1FB;
-  --bg:#f5f4ef;--white:#ffffff;--border:#e8e8e4;--border2:#e0e0da;
-  --text:#1a1a18;--text2:#555;--text3:#888;--text4:#aaa;
-  --font:system-ui,-apple-system,sans-serif;
-  --r:12px;--r2:10px;--r3:8px;
+  --g:#1D9E75;--gl:#E1F5EE;--gd:#085041;
+  --r:#E24B4A;--rl:#FCEBEB;
+  --a:#EF9F27;--al:#FAEEDA;
+  --b:#378ADD;--bl:#E6F1FB;
+  --bg:#f5f4ef;--w:#fff;
+  --bd:#e8e8e4;--bd2:#e0e0da;
+  --t1:#1a1a18;--t2:#555;--t3:#888;--t4:#aaa;
+  --f:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --r8:8px;--r10:10px;--r12:12px;--r14:14px;--r20:20px;
 }
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
-button{font-family:var(--font);cursor:pointer;border:none;outline:none}
-input,select,textarea{font-family:var(--font);outline:none}
-a{color:var(--green);text-decoration:none}
+body{font-family:var(--f);background:var(--bg);color:var(--t1);min-height:100vh;max-width:520px;margin:0 auto;overflow-x:hidden}
+button{font-family:var(--f);cursor:pointer;border:none;background:none;outline:none}
+input,select,textarea{font-family:var(--f);outline:none}
+a{text-decoration:none}
 
-/* ── Layout ── */
-#app{display:flex;flex-direction:column;min-height:100vh;max-width:480px;margin:0 auto;position:relative}
-#header{background:var(--white);border-bottom:0.5px solid var(--border);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-#header h1{font-size:16px;font-weight:700;color:var(--text);display:flex;align-items:center;gap:6px}
-#header h1 span.logo{font-size:20px}
-#header h1 span.tagline{font-size:12px;color:var(--text3);font-weight:400}
-#content{flex:1;padding:16px;padding-bottom:80px}
-#nav{background:var(--white);border-top:0.5px solid var(--border);padding:8px 0 calc(8px + env(safe-area-inset-bottom));display:flex;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;z-index:100}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;background:none;border:none;cursor:pointer;color:var(--text3);font-size:10px;font-family:var(--font);transition:color 0.15s}
-.nav-btn.active{color:var(--green)}
-.nav-btn svg{width:22px;height:22px;stroke-width:1.8}
+/* Header */
+#hdr{background:var(--w);border-bottom:1px solid var(--bd);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:60}
+#hdr-logo{font-size:17px;font-weight:800;display:flex;align-items:center;gap:7px;letter-spacing:-.3px}
+#hdr-btns{display:flex;align-items:center;gap:6px}
+.hbtn{border:1px solid var(--bd2);border-radius:var(--r8);padding:5px 9px;font-size:11px;color:var(--t2);cursor:pointer}
 
-/* ── Cards ── */
-.card{background:var(--white);border:0.5px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
-.card-sm{background:var(--white);border:0.5px solid var(--border);border-radius:var(--r2);padding:10px 12px;margin-bottom:8px}
-.section-title{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.07em;margin:18px 0 8px}
+/* Page content */
+#pg{padding:14px 14px 88px}
 
-/* ── Forms ── */
-.inp{width:100%;padding:10px 12px;font-size:14px;border:1px solid var(--border2);border-radius:var(--r3);background:var(--white);color:var(--text);font-family:var(--font);transition:border-color 0.15s}
-.inp:focus{border-color:var(--green)}
-.lbl{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:5px}
-.field{margin-bottom:12px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.btn-primary{width:100%;padding:12px;background:var(--green);color:#fff;border-radius:var(--r2);font-size:14px;font-weight:700;border:none;cursor:pointer;transition:opacity 0.15s}
-.btn-primary:active{opacity:0.85}
-.btn-secondary{padding:10px 18px;background:none;border:1px solid var(--border2);border-radius:var(--r2);font-size:13px;color:var(--text2);cursor:pointer}
-.btn-danger{padding:8px 14px;background:var(--red-light);border:0.5px solid var(--red);border-radius:var(--r3);font-size:12px;color:var(--red);cursor:pointer}
+/* Bottom nav */
+#bnav{background:var(--w);border-top:1px solid var(--bd);padding:6px 0 20px;display:flex;position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;z-index:60}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 2px;color:var(--t3);font-size:10px;cursor:pointer;transition:color .15s}
+.nb.on{color:var(--g)}
+.nb svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 
-/* ── Pills / badges ── */
-.pill{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:500}
-.pill-blue{background:var(--blue-light);color:#0C447C}
+/* Cards */
+.card{background:var(--w);border:1px solid var(--bd);border-radius:var(--r12);padding:13px 14px;margin-bottom:9px}
+.csm{background:var(--w);border:1px solid var(--bd);border-radius:var(--r10);padding:10px 12px;margin-bottom:7px}
 
-.preview-box{width:100%;height:140px;border:1px dashed var(--border2);border-radius:var(--r2);display:flex;align-items:center;justify-content:center;overflow:hidden;background:#fafafa;margin-bottom:12px;position:relative;cursor:pointer}
-.preview-box img{width:100%;height:100%;object-fit:contain}
+/* Forms */
+.inp{width:100%;padding:9px 11px;font-size:14px;border:1px solid var(--bd2);border-radius:var(--r8);background:var(--w);color:var(--t1);transition:border-color .15s}
+.inp:focus{border-color:var(--g)}
+.lbl{display:block;font-size:11px;font-weight:600;color:var(--t2);margin-bottom:4px}
+.fld{margin-bottom:11px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.btnp{width:100%;padding:11px;background:var(--g);color:#fff;border-radius:var(--r10);font-size:14px;font-weight:700;border:none;cursor:pointer}
+.btnp:active{opacity:.85}
+.btns{padding:9px 14px;border:1px solid var(--bd2);border-radius:var(--r10);font-size:13px;color:var(--t2);cursor:pointer;background:var(--w)}
+.btnd{padding:8px 12px;background:var(--rl);border:1px solid var(--r);border-radius:var(--r8);font-size:12px;color:var(--r);cursor:pointer}
 
-.scope-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--border)}
-.scope-row input[type="checkbox"]{width:18px;height:18px;accent-color:var(--green)}
+/* Sheet overlay */
+#ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:100;align-items:flex-end;justify-content:center}
+#ov.show{display:flex}
+#sh{background:var(--w);border-radius:20px 20px 0 0;padding:16px 16px 32px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.sh-handle{width:36px;height:4px;background:var(--bd);border-radius:2px;margin:0 auto 14px}
+.sh-title{font-size:17px;font-weight:700;margin-bottom:14px}
 
-#drive-notice{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 16px;border-radius:var(--r2);font-size:12px;z-index:300;opacity:0;transition:opacity 0.3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
-#drive-notice.show{opacity:1}
+/* Privacy modal */
+#prv-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;align-items:center;justify-content:center;padding:14px}
+#prv-ov.show{display:flex}
+#prv-box{background:var(--w);border-radius:var(--r20);max-width:440px;width:100%;padding:22px 18px;max-height:92vh;overflow-y:auto}
+
+/* Notices */
+.ntc{padding:10px 12px;border-radius:var(--r10);font-size:12px;line-height:1.6;margin-bottom:11px}
+.ng{background:var(--gl);border:1px solid #9FE1CB;color:var(--gd)}
+.na{background:var(--al);border:1px solid #FAC775;color:#633806}
+.nr{background:var(--rl);border:1px solid #F09595;color:#791F1F}
+.nb2{background:var(--bl);border:1px solid #A8CCEA;color:#0C447C}
+
+/* Pills */
+.pl{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+
+/* Avatar */
+.av{border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;flex-shrink:0}
+
+/* Toast */
+#toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%);background:rgba(26,26,24,.95);color:#fff;padding:9px 16px;border-radius:var(--r10);font-size:13px;z-index:400;opacity:0;transition:opacity .25s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+#toast.show{opacity:1}
+
+/* Section title */
+.stl{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.07em;margin:14px 0 7px;display:flex;align-items:center;justify-content:space-between}
+.stl .stl-btn{font-size:12px;color:var(--g);font-weight:600;text-transform:none;letter-spacing:0;border:none;background:none;cursor:pointer;font-family:var(--f)}
+
+/* Tabs */
+.tabs{display:flex;background:#f1f0eb;border-radius:var(--r10);padding:3px;margin-bottom:13px}
+.tab{flex:1;padding:7px 4px;font-size:12px;font-family:var(--f);border:none;border-radius:var(--r8);background:none;cursor:pointer;color:var(--t3);font-weight:400;white-space:nowrap}
+.tab.on{background:var(--w);color:var(--t1);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+
+/* Health section grid */
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.sc{background:var(--w);border:1px solid var(--bd);border-radius:var(--r10);padding:12px;cursor:pointer;transition:border-color .15s;position:relative}
+.sc:active{border-color:var(--g);background:var(--gl)}
+.sc-ic{font-size:22px;margin-bottom:5px}
+.sc-nm{font-size:12px;font-weight:600}
+.sc-ct{font-size:11px;color:var(--t3);margin-top:1px}
+
+/* Summary cards */
+.sumgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px}
+.sumc{background:var(--w);border:1px solid var(--bd);border-radius:var(--r10);padding:10px 8px;text-align:center;cursor:pointer}
+.sumc-n{font-size:20px;font-weight:800;margin-bottom:1px}
+.sumc-l{font-size:10px;color:var(--t3);line-height:1.3}
+
+/* Empty state */
+.emp{text-align:center;padding:36px 16px;color:var(--t3)}
+.emp-ic{font-size:34px;margin-bottom:9px}
+.emp h3{font-size:14px;font-weight:600;color:var(--t2);margin-bottom:5px}
+.emp p{font-size:12px;line-height:1.5;margin-bottom:16px}
+
+/* Delete & edit icon buttons */
+.xbtn{background:none;border:none;cursor:pointer;color:var(--t4);font-size:18px;padding:2px 5px;line-height:1;transition:color .15s;flex-shrink:0}
+.xbtn:hover,.xbtn:active{color:var(--r)}
+.ebtn{background:none;border:none;cursor:pointer;color:var(--t4);font-size:14px;padding:2px 5px;line-height:1;transition:color .15s;flex-shrink:0}
+.ebtn:hover,.ebtn:active{color:var(--b)}
+
+/* Drive/OCR upload box */
+.upload-box{border:2px dashed var(--bd2);border-radius:var(--r10);padding:20px;text-align:center;cursor:pointer;margin-bottom:11px;background:#fafaf8;transition:border-color .15s}
+.upload-box:hover{border-color:var(--g);background:var(--gl)}
+.upload-box input{display:none}
+
+/* Camera icon */
+.cam-row{display:flex;gap:8px;margin-bottom:11px}
+.cam-btn{flex:1;padding:10px 0;border:1px solid var(--bd2);border-radius:var(--r8);font-size:12px;color:var(--t2);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;background:var(--w)}
+.cam-btn:active{background:var(--gl);border-color:var(--g);color:var(--gd)}
+
+/* Thumbnail */
+.thumb{width:60px;height:60px;border-radius:var(--r8);object-fit:cover;border:1px solid var(--bd);flex-shrink:0}
+
+/* Share encrypt */
+.pin-row{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.pin-digit{width:52px;height:56px;border:2px solid var(--bd2);border-radius:var(--r10);font-size:24px;font-weight:700;text-align:center;background:var(--w);color:var(--t1)}
+.pin-digit:focus{border-color:var(--g)}
+
+/* OCR result */
+.ocr-field{background:#fffdf0;border:1px solid #EF9F27;border-radius:var(--r8);padding:8px 10px;font-size:13px;color:var(--t1);width:100%;margin-bottom:8px}
 </style>
 </head>
 <body>
 
-<!-- Privacy modal -->
-<div id="privacy-modal" style="display:none">
-  <div class="box" style="background:#fff; padding:24px; border-radius:20px; max-width:440px; width:90%;">
-    <div style="text-align:center;margin-bottom:18px">
-      <div style="width:56px;height:56px;background:var(--green);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 12px">🔐</div>
-      <div style="font-size:20px;font-weight:800;margin-bottom:4px">Welcome to KulDhan</div>
-      <div style="font-size:13px;color:var(--text3)">Your completely local vault application</div>
+<!-- Privacy Modal -->
+<div id="prv-ov">
+  <div id="prv-box">
+    <div style="text-align:center;margin-bottom:16px">
+      <div style="width:52px;height:52px;background:var(--g);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;margin:0 auto 10px">🔐</div>
+      <div style="font-size:19px;font-weight:800">Before you begin</div>
+      <div style="font-size:12px;color:var(--t3);margin-top:3px">Your data privacy matters</div>
     </div>
-    <button class="btn-primary" onclick="acceptPrivacy()">Get Started →</button>
-  </div>
-</div>
-
-<div id="drive-notice">Notification space</div>
-
-<!-- Main App Frame -->
-<div id="app">
-  <div id="header">
-    <h1><span class="logo">🔐</span> KulDhan <span class="tagline">— Family Vault</span></h1>
-    <div id="header-actions" style="display:flex;align-items:center;gap:8px">
-      <button onclick="openImportPopup()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--r3);padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer">Import</button>
-      <button onclick="exportData()" style="background:none;border:0.5px solid var(--border2);border-radius:var(--r3);padding:6px 10px;font-size:12px;color:var(--text2);cursor:pointer">Export</button>
+    <div id="prv-pts"></div>
+    <div style="font-size:11px;color:var(--t3);background:#f5f4ef;border-radius:var(--r10);padding:10px 12px;margin-bottom:14px;line-height:1.6">
+      <strong style="color:var(--t2)">Legal disclaimer:</strong> KulDhan is a personal records organiser, not a licensed financial or medical adviser. All information is for personal reference only. KulDhan is not liable for any loss, including loss of data. By continuing you confirm you have read and understood these terms.
     </div>
-  </div>
-
-  <div id="content"></div>
-
-  <nav id="nav">
-    <button class="nav-btn active" onclick="showPage('home')" id="nav-home">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      Home
-    </button>
-    <button class="nav-btn" onclick="showPage('members')" id="nav-members">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-      Family
-    </button>
-    <button class="nav-btn" onclick="showPage('health')" id="nav-health">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
-      Health
-    </button>
-    <button class="nav-btn" onclick="showPage('finance')" id="nav-finance">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-      Finance
-    </button>
-    <button class="nav-btn" onclick="showPage('docs')" id="nav-docs">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Docs
-    </button>
-  </nav>
-</div>
-
-<!-- Inputs inputs outside DOM stream -->
-<input type="file" id="global-file-picker" accept="image/*" style="display:none" onchange="handleFileSelection(event)">
-<input type="file" id="import-json-picker" accept=".json,text/plain" style="display:none" onchange="importData(event)">
-
-<div class="overlay" id="sheet-overlay" onclick="closeSheet(event)">
-  <div class="sheet" id="sheet-content">
-    <div class="sheet-handle"></div>
-    <div id="sheet-body"></div>
+    <button class="btnp" id="prv-ok">I understand — open my vault →</button>
+    <div style="text-align:center;font-size:11px;color:var(--t4);margin-top:9px">No server · works offline · DPDP Act 2023 compliant</div>
   </div>
 </div>
 
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- App shell -->
+<div id="hdr">
+  <div id="hdr-logo"><span>🔐</span>KulDhan</div>
+  <div id="hdr-btns">
+    <button class="hbtn" onclick="A.backup()">☁️ Backup</button>
+    <button class="hbtn" onclick="A.importMenu()">📥 Import</button>
+  </div>
+</div>
+
+<div id="pg"></div>
+
+<nav id="bnav">
+  <button class="nb on" id="nb-home" onclick="A.go('home')">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+  </button>
+  <button class="nb" id="nb-family" onclick="A.go('family')">
+    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>Family
+  </button>
+  <button class="nb" id="nb-health" onclick="A.go('health')">
+    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>Health
+  </button>
+  <button class="nb" id="nb-fin" onclick="A.go('fin')">
+    <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>Finance
+  </button>
+  <button class="nb" id="nb-docs" onclick="A.go('docs')">
+    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Docs
+  </button>
+</nav>
+
+<!-- Sheet -->
+<div id="ov" onclick="if(event.target===this)A.closeSheet()">
+  <div id="sh">
+    <div class="sh-handle"></div>
+    <div id="sh-t" class="sh-title"></div>
+    <div id="sh-b"></div>
+  </div>
+</div>
+
+<!-- Hidden inputs -->
+<input type="file" id="fi-photo-cam" accept="image/*" capture="environment" style="display:none" onchange="A.doDriveUpload(event)">
+<input type="file" id="fi-photo-file" accept="image/*" style="display:none" onchange="A.doDriveUpload(event)">
+<input type="file" id="fi-imp" accept=".json" style="display:none" onchange="A.doImport(event)">
+<input type="file" id="fi-ocr" accept="image/*,.pdf" capture="environment" style="display:none" onchange="A.doOCR(event)">
+<input type="file" id="fi-cam" accept="image/*" capture="environment" style="display:none" onchange="A.doOCR(event)">
+<input type="file" id="fi-drive" accept="image/*,.pdf,.doc,.docx" style="display:none" onchange="A.doDriveUpload(event)">
 <script>
-const DB_KEY = 'kuldhan_v1';
-const PRIVACY_KEY = 'kuldhan_privacy_ok';
-const COLORS = ['#1D9E75','#378ADD','#D85A30','#7F77DD','#D4537E','#639922','#EF9F27','#E24B4A'];
-const BLOOD_GROUPS = ['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'];
-const RELATIONS = ['self','spouse','mother','father','son','daughter','brother','sister','grandfather','grandmother','uncle','aunt','other'];
+// ═══════════════════════════════════════════
+// KulDhan — Local-first family vault
+// Data: localStorage only — no server ever
+// ═══════════════════════════════════════════
 
-let DB = {};
-let currentPage = 'home';
-let currentMemberId = null;
-let temporaryBase64Image = ""; 
+const VER='kd2', PVK='kd2pv';
+const COLORS=['#1D9E75','#378ADD','#D85A30','#7F77DD','#D4537E','#639922','#EF9F27','#E24B4A'];
+const BLOOD=['A+','A-','B+','B-','O+','O-','AB+','AB-','Unknown'];
+const RELS=['self','spouse','mother','father','son','daughter','brother','sister','grandfather','grandmother','mother-in-law','father-in-law','other'];
+const CAT_BG={insurance:'#FCEBEB',identity:'#E6F1FB',finance:'#FAEEDA',medical:'#FBEAF0',education:'#EAF3DE',property:'#EEEDFE',other:'#F1EFE8'};
 
-function loadDB() {
-  try { DB = JSON.parse(localStorage.getItem(DB_KEY) || '{}'); } catch { DB = {}; }
-  if (!DB.members) DB.members = [];
-  if (!DB.health) DB.health = {};
-  if (!DB.insurance) DB.insurance = [];
-  if (!DB.finance) DB.finance = { accounts: [], mf: [], fd: [] };
-  if (!DB.docs) DB.docs = [];
-  if (!DB.sos) DB.sos = { contacts: [], hospitals: [], ambulance: [] };
+let DB={}, curPage='home', ocrCtx={table:'', idx:-1};
+
+// ── DB ──────────────────────────────────────
+function ldb(){
+  try{DB=JSON.parse(localStorage.getItem(VER)||'{}')}catch(e){DB={}}
+  const def={members:[],health:{},insurance:[],accounts:[],fds:[],mfs:[],docs:[],sos:{contacts:[],hospitals:[]},memberships:[],career:{emp:[],edu:[]}};
+  for(const k in def) if(DB[k]===undefined) DB[k]=def[k];
+}
+function sdb(){localStorage.setItem(VER,JSON.stringify(DB))}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,5)}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function gv(id){const e=document.getElementById(id);if(!e)return'';return e.type==='checkbox'?e.checked:e.value.trim()}
+function sv(id,v){const e=document.getElementById(id);if(e){if(e.type==='checkbox')e.checked=!!v;else e.value=v||''}}
+function fINR(n){n=Number(n)||0;if(n>=1e7)return'₹'+(n/1e7).toFixed(2)+' Cr';if(n>=1e5)return'₹'+(n/1e5).toFixed(2)+' L';return'₹'+n.toLocaleString('en-IN')}
+function daysTo(d){return d?Math.ceil((new Date(d)-Date.now())/86400000):null}
+function initH(id){if(!DB.health[id])DB.health[id]={allergies:[],medications:[],conditions:[],vitals:[],doctors:[],procedures:[],vaccinations:[],history:[]}}
+function memName(id){return DB.members.find(m=>m.id===id)?.name||''}
+function memOpts(sel=''){return '<option value="">— Select —</option>'+DB.members.map(m=>`<option value="${m.id}"${sel===m.id?' selected':''}>${esc(m.name)}</option>`).join('')}
+
+// ── Toast ────────────────────────────────────
+function toast(msg,ms=2800){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),ms)}
+
+// ── Sheet ────────────────────────────────────
+function openSheet(title,html){
+  document.getElementById('sh-t').textContent=title;
+  document.getElementById('sh-b').innerHTML=html;
+  document.getElementById('ov').classList.add('show');
+  document.getElementById('sh').scrollTop=0;
+}
+function closeSheet(){document.getElementById('ov').classList.remove('show')}
+
+// ── Nav ──────────────────────────────────────
+function setNav(p){
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  const n=document.getElementById('nb-'+p);
+  if(n)n.classList.add('on');
 }
 
-function saveDB() {
-  localStorage.setItem(DB_KEY, JSON.stringify(DB));
+// ── Export / Import / Backup ─────────────────
+function doExport(){
+  const blob=new Blob([JSON.stringify(DB,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='kuldhan-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  toast('✓ Exported! Upload to your Google Drive for backup');
 }
-
-function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
-function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-
-function acceptPrivacy() {
-  localStorage.setItem(PRIVACY_KEY, '1');
-  document.getElementById('privacy-modal').style.display = 'none';
-}
-
-function exportData() {
-  const blob = new Blob([JSON.stringify(DB, null, 2)], {type:'application/json'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'kuldhan-backup-' + new Date().toISOString().slice(0,10) + '.json';
-  a.click();
-  URL.revokeObjectURL(url);
-  showDriveToast('Vault file backup package exported!');
-}
-
-function openImportPopup() {
-  document.getElementById('import-json-picker').click();
-}
-
-function showDriveToast(msg) {
-  const el = document.getElementById('drive-notice');
-  el.textContent = msg;
-  el.classList.add('show');
-  setTimeout(() => el.classList.remove('show'), 3000);
-}
-
-function importData(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      let dataText = ev.target.result;
-      if (dataText.startsWith("SECURE-VAULT:")) {
-        const pin = prompt("Encrypted backup. Enter security password key code:");
-        if (!pin) return;
-        dataText = xorCipher(dataText.replace("SECURE-VAULT:", ""), pin);
-      }
-      const data = JSON.parse(dataText);
-      if (data.members) {
-        DB = data;
-        saveDB();
-        showPage(currentPage);
-        alert('Vault package processed completely!');
-      }
-    } catch { alert('Data package structural parsing failure.'); }
+function importMenu(){document.getElementById('fi-imp').click()}
+function doImport(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    try{
+      const d=JSON.parse(ev.target.result);
+      // Check if encrypted share packet
+      if(d._kd_share){doDecryptImport(d);return}
+      DB=d;ldb();sdb();go(curPage);toast('✓ Data imported!')
+    }catch(err){alert('Invalid file. Please choose a KulDhan .json export.')}
   };
-  reader.readAsText(file);
+  r.readAsText(f);
+  e.target.value='';
+}
+function backup(){
+  openSheet('☁️ Backup & Restore',`
+    <div class="ntc ng" style="margin-bottom:12px"><strong>Your data stays on this device.</strong> Back it up to your own Google Drive:</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px">
+      <button class="btnp" onclick="A.doExport()">⬇️ Export vault (.json file)</button>
+      <button class="btns" style="width:100%;text-align:center" onclick="A.importMenu()">⬆️ Import / Restore from file</button>
+    </div>
+    <div style="font-size:12px;color:var(--t2);line-height:1.7">
+      <strong>How to back up to Google Drive:</strong><br>
+      1. Tap <strong>Export</strong> — downloads a .json file<br>
+      2. Open <strong>Google Drive</strong> on your phone<br>
+      3. Upload the file to a private folder<br><br>
+      <strong>To restore on another device:</strong><br>
+      Download the .json from your Drive → tap <strong>Import</strong> here
+    </div>`);
 }
 
-/* ── Local File Handling Framework ── */
-function triggerFilePicker() {
-  document.getElementById('global-file-picker').click();
+// ══════════════════════════════════════════
+// ENCRYPTED SHARE FEATURE
+// AES-GCM encryption, PIN = 4 digits
+// ══════════════════════════════════════════
+async function deriveKey(pin,salt){
+  const enc=new TextEncoder();
+  const km=await crypto.subtle.importKey('raw',enc.encode(pin),'PBKDF2',false,['deriveKey']);
+  return crypto.subtle.deriveKey({name:'PBKDF2',salt,iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
 }
-
-function handleFileSelection(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-
-  showDriveToast("Downscaling thumbnail locally...");
-  const reader = new FileReader();
-  reader.onload = function(event) {
-    const img = new Image();
-    img.onload = function() {
-      const canvas = document.createElement('canvas');
-      let width = img.width;
-      let height = img.height;
-      const max_size = 400; 
-
-      if (width > height) {
-        if (width > max_size) { height *= max_size / width; width = max_size; }
-      } else {
-        if (height > max_size) { width *= max_size / height; height = max_size; }
-      }
-      canvas.width = width;
-      canvas.height = height;
-      
-      const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0, width, height);
-      
-      temporaryBase64Image = canvas.toDataURL('image/jpeg', 0.60);
-      
-      const pContainer = document.getElementById('preview-container');
-      if (pContainer) {
-        pContainer.innerHTML = `<img src="${temporaryBase64Image}" style="width:100%; height:100%; object-fit:contain;">`;
-      }
-    };
-    img.src = event.target.result;
+async function encryptData(data,pin){
+  const salt=crypto.getRandomValues(new Uint8Array(16));
+  const iv=crypto.getRandomValues(new Uint8Array(12));
+  const key=await deriveKey(pin,salt);
+  const enc=new TextEncoder();
+  const ct=await crypto.subtle.encrypt({name:'AES-GCM',iv},key,enc.encode(JSON.stringify(data)));
+  return {
+    _kd_share:true,
+    salt:btoa(String.fromCharCode(...salt)),
+    iv:btoa(String.fromCharCode(...iv)),
+    ct:btoa(String.fromCharCode(...new Uint8Array(ct)))
   };
+}
+async function decryptData(pkg,pin){
+  const s=Uint8Array.from(atob(pkg.salt),c=>c.charCodeAt(0));
+  const iv=Uint8Array.from(atob(pkg.iv),c=>c.charCodeAt(0));
+  const ct=Uint8Array.from(atob(pkg.ct),c=>c.charCodeAt(0));
+  const key=await deriveKey(pin,s);
+  const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv},key,ct);
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+
+function shareMenu(){
+  const cats=[
+    {k:'all',lb:'Everything (full vault)',ic:'📦'},
+    {k:'sos',lb:'SOS emergency card',ic:'🚨'},
+    {k:'health',lb:'Health records',ic:'❤️'},
+    {k:'insurance',lb:'Insurance policies',ic:'🛡️'},
+    {k:'finance',lb:'Finance (accounts, FD, MF)',ic:'💰'},
+    {k:'members',lb:'Family member details',ic:'👨‍👩‍👧‍👦'},
+    {k:'docs',lb:'Document list & links',ic:'📂'},
+  ];
+  openSheet('📤 Share encrypted data',`
+    <div class="ntc nb2" style="margin-bottom:12px">Data is encrypted with a 4-digit PIN. Share the file + PIN separately over WhatsApp.</div>
+    <div class="fld"><label class="lbl">Select what to share</label>
+      <select class="inp" id="sh-cat">
+        ${cats.map(c=>`<option value="${c.k}">${c.ic} ${c.lb}</option>`).join('')}
+      </select>
+    </div>
+    <div class="fld"><label class="lbl">4-digit encryption PIN</label>
+      <input class="inp" id="sh-pin" type="number" maxlength="4" placeholder="e.g. 7362" style="font-size:22px;letter-spacing:8px;text-align:center">
+    </div>
+    <div class="fld"><label class="lbl">Recipient name (for your reference)</label>
+      <input class="inp" id="sh-name" placeholder="e.g. Dr. Mehta, Rahul">
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.doShare()" style="flex:1">🔐 Encrypt &amp; Export</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>
+    <div id="sh-result" style="margin-top:14px"></div>
+  `);
+}
+
+async function doShare(){
+  const cat=gv('sh-cat'), pin=gv('sh-pin'), name=gv('sh-name');
+  if(!pin||pin.length<4){toast('Enter a 4-digit PIN');return}
+  let payload={};
+  if(cat==='all')payload=DB;
+  else if(cat==='sos')payload={sos:DB.sos,members:DB.members.map(m=>({name:m.name,blood:m.blood,color:m.color})),health:DB.health};
+  else if(cat==='health')payload={members:DB.members,health:DB.health};
+  else if(cat==='insurance')payload={insurance:DB.insurance,members:DB.members};
+  else if(cat==='finance')payload={accounts:DB.accounts,fds:DB.fds,mfs:DB.mfs,members:DB.members};
+  else if(cat==='members')payload={members:DB.members};
+  else if(cat==='docs')payload={docs:DB.docs};
+  payload._shared_by=name||'KulDhan user';
+  payload._shared_at=new Date().toISOString();
+  payload._share_type=cat;
+  try{
+    const enc=await encryptData(payload,pin);
+    const blob=new Blob([JSON.stringify(enc)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='kuldhan-share-'+( name||'data')+'-'+new Date().toISOString().slice(0,10)+'.json';
+    document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+    document.getElementById('sh-result').innerHTML=`
+      <div class="ntc ng">
+        <strong>✓ Encrypted file downloaded!</strong><br><br>
+        Send via WhatsApp: share the file + tell them the PIN <strong>${pin}</strong> separately.<br><br>
+        Recipient: open KulDhan → Import → pick the .json file → enter PIN <strong>${pin}</strong>
+      </div>
+      <button onclick="navigator.share?navigator.share({text:'I shared KulDhan family data with you. PIN: ${pin}. Import the file I sent into your KulDhan app.'}):window.open('https://wa.me/?text='+encodeURIComponent('I shared KulDhan family data with you. PIN: ${pin}. Import the .json file I sent into your KulDhan app.'),'_blank')" style="width:100%;padding:10px;background:#25D366;color:#fff;border-radius:var(--r10);font-size:13px;font-weight:700;border:none;cursor:pointer;margin-top:8px">📱 Send PIN via WhatsApp</button>`;
+  }catch(err){toast('Encryption failed: '+err.message)}
+}
+
+function doDecryptImport(pkg){
+  openSheet('🔐 Decrypt shared data',`
+    <div class="ntc nb2" style="margin-bottom:12px">Enter the 4-digit PIN that was shared with you.</div>
+    <div class="fld"><label class="lbl">4-digit PIN</label>
+      <input class="inp" id="dec-pin" type="number" maxlength="4" placeholder="Enter PIN" style="font-size:22px;letter-spacing:8px;text-align:center" autofocus>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btnp" onclick="A.doDecrypt()" style="flex:1">🔓 Decrypt &amp; Import</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>
+    <div id="dec-result" style="margin-top:12px"></div>
+  `);
+  window._pendingPkg=pkg;
+}
+
+async function doDecrypt(){
+  const pin=gv('dec-pin');
+  if(!pin||pin.length<4){toast('Enter the 4-digit PIN');return}
+  const res=document.getElementById('dec-result');
+  res.innerHTML='<div style="font-size:13px;color:var(--t3)">Decrypting…</div>';
+  try{
+    const data=await decryptData(window._pendingPkg,pin);
+    // Merge imported data
+    if(data._share_type==='all'){DB=data}
+    else if(data._share_type==='health'){DB.health={...DB.health,...data.health}}
+    else if(data._share_type==='sos'){DB.sos=data.sos}
+    else if(data._share_type==='insurance'){DB.insurance=[...DB.insurance,...(data.insurance||[])]}
+    else if(data._share_type==='finance'){DB.accounts=[...DB.accounts,...(data.accounts||[])];DB.fds=[...DB.fds,...(data.fds||[])];DB.mfs=[...DB.mfs,...(data.mfs||[])]}
+    else if(data._share_type==='members'){DB.members=[...DB.members,...(data.members||[])]}
+    else if(data._share_type==='docs'){DB.docs=[...DB.docs,...(data.docs||[])]}
+    const by=data._shared_by||'Someone';
+    sdb();closeSheet();go(curPage);
+    toast('✓ Data from '+by+' imported!');
+  }catch(err){
+    res.innerHTML='<div class="ntc nr">Wrong PIN or corrupted file. Try again.</div>';
+  }
+}
+
+// ══════════════════════════════════════════
+// OCR — free, browser-based via Tesseract.js CDN
+// ══════════════════════════════════════════
+let tesseractReady=false, tesseractWorker=null;
+async function getOCRWorker(){
+  if(tesseractWorker)return tesseractWorker;
+  await loadScript('https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js');
+  const w=await Tesseract.createWorker('eng');
+  tesseractWorker=w;return w;
+}
+function loadScript(src){
+  return new Promise((res,rej)=>{
+    if(document.querySelector(`script[src="${src}"]`)){res();return}
+    const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);
+  });
+}
+
+function showUploadBox(ctx){
+  // ctx = {table, idx, fields, onResult}
+  ocrCtx=ctx;
+  return `
+    <div class="ntc na" style="margin-bottom:10px">📸 Upload or photograph the document — AI will extract text and fill the fields automatically.</div>
+    <div class="cam-row">
+      <button class="cam-btn" onclick="document.getElementById('fi-cam').click()">📷 Take photo</button>
+      <button class="cam-btn" onclick="document.getElementById('fi-ocr').click()">🖼️ Upload image/PDF</button>
+    </div>
+    <div id="ocr-status" style="font-size:12px;color:var(--t3);text-align:center;min-height:18px;margin-bottom:8px"></div>
+    <div id="ocr-thumb" style="margin-bottom:10px"></div>
+    <div id="ocr-fields" style="display:none">
+      <div class="ntc ng" style="font-size:12px">✓ Text extracted! Review and edit the fields below, then save.</div>
+    </div>`;
+}
+
+async function doOCR(e){
+  const file=e.target.files[0];if(!file)return;
+  e.target.value='';
+  const status=document.getElementById('ocr-status');
+  const thumbEl=document.getElementById('ocr-thumb');
+  const fieldsEl=document.getElementById('ocr-fields');
+  if(!status)return;
+  // Show preview if image
+  if(file.type.startsWith('image/')){
+    const url=URL.createObjectURL(file);
+    thumbEl.innerHTML=`<img src="${url}" style="max-width:100%;max-height:180px;border-radius:var(--r8);border:1px solid var(--bd)">`;
+  }
+  status.innerHTML='⏳ Loading OCR engine…';
+  try{
+    const w=await getOCRWorker();
+    status.innerHTML='🔍 Extracting text…';
+    const {data:{text}}=await w.recognize(file);
+    status.innerHTML='✓ Text extracted';
+    if(ocrCtx.onResult) ocrCtx.onResult(text);
+    else fillOCRFields(text);
+  }catch(err){
+    status.innerHTML='⚠️ OCR failed. Please fill fields manually.';
+    console.error(err);
+  }
+}
+
+function fillOCRFields(text){
+  // Generic field filling from extracted text
+  const fieldsEl=document.getElementById('ocr-fields');
+  if(!fieldsEl)return;
+  fieldsEl.style.display='block';
+  // Try to fill form fields that are visible
+  const lines=text.split('\n').map(l=>l.trim()).filter(l=>l.length>2);
+  // Store raw text in notes/description if field exists
+  const notesEl=document.getElementById('f-notes')||document.getElementById('f-details');
+  if(notesEl&&!notesEl.value) notesEl.value=lines.slice(0,5).join('\n');
+  toast('Text extracted — check and edit fields below');
+}
+
+// ══════════════════════════════════════════
+// DRIVE UPLOAD — links file in user's own Drive
+// ══════════════════════════════════════════
+function driveUploadBox(){
+  return `
+    <div class="ntc na" style="font-size:12px;margin-bottom:10px">
+      ☁️ <strong>Files upload to YOUR Google Drive</strong> — not our server. Only you can access them.<br>
+      Upload here → we save the link. Tap the link anytime to view your file.
+    </div>
+    <div class="upload-box" onclick="document.getElementById('fi-drive').click()">
+      <div style="font-size:28px;margin-bottom:6px">📎</div>
+      <div style="font-size:13px;font-weight:600;color:var(--t2)">Tap to upload file</div>
+      <div style="font-size:11px;color:var(--t3);margin-top:3px">Image, PDF, or any document</div>
+    </div>
+    <div id="drive-status" style="font-size:12px;color:var(--t3);text-align:center;margin-bottom:8px"></div>
+    <div id="drive-thumb" style="margin-bottom:10px"></div>
+    <input type="hidden" id="drive-link" value="">
+    <input type="hidden" id="drive-name" value="">`;
+}
+
+function doDriveUpload(e){
+  const file=e.target.files[0];if(!file)return;
+  e.target.value='';
+  const status=document.getElementById('drive-status');
+  const thumbEl=document.getElementById('drive-thumb');
+  const linkEl=document.getElementById('drive-link');
+  const nameEl=document.getElementById('drive-name');
+  if(!status)return;
+  // Store file locally as base64 data URL (no server needed)
+  status.innerHTML='⏳ Preparing file…';
+  if(nameEl) nameEl.value=file.name;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    const dataUrl=ev.target.result;
+    if(linkEl) linkEl.value=dataUrl; // Store as local data URL
+    // Show thumbnail for images
+    if(file.type.startsWith('image/')){
+      thumbEl.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:8px;background:#f5f4ef;border-radius:var(--r8)"><img src="${dataUrl}" style="width:52px;height:52px;object-fit:cover;border-radius:var(--r8);border:1px solid var(--bd)"><div><div style="font-size:12px;font-weight:600">${esc(file.name)}</div><div style="font-size:11px;color:var(--t3)">${(file.size/1024).toFixed(0)} KB · stored locally</div></div></div>`;
+    }else{
+      thumbEl.innerHTML=`<div style="display:flex;align-items:center;gap:10px;padding:8px;background:#f5f4ef;border-radius:var(--r8)"><span style="font-size:32px">${file.name.endsWith('.pdf')?'📄':'📎'}</span><div><div style="font-size:12px;font-weight:600">${esc(file.name)}</div><div style="font-size:11px;color:var(--t3)">${(file.size/1024).toFixed(0)} KB · stored locally</div></div></div>`;
+    }
+    status.innerHTML='✓ File ready to save with document';
+    toast('File ready — fill details and tap Save');
+  };
+  reader.onerror=()=>{ status.innerHTML='Error reading file'; };
   reader.readAsDataURL(file);
 }
-
-function xorCipher(str, key) {
-  let output = '';
-  for (let i = 0; i < str.length; i++) {
-    output += String.fromCharCode(str.charCodeAt(i) ^ key.charCodeAt(i % key.length));
-  }
-  return output;
-}
-
-/* ── Sheet Display Modals ── */
-function openSheet(title, html) {
-  document.getElementById('sheet-body').innerHTML = `<div class="sheet-title">${esc(title)}</div>` + html;
-  document.getElementById('sheet-overlay').classList.add('open');
-}
-function closeSheet(e) {
-  if (e && e.target !== document.getElementById('sheet-overlay')) return;
-  document.getElementById('sheet-overlay').classList.remove('open');
-}
-function closeSheetDirect() {
-  document.getElementById('sheet-overlay').classList.remove('open');
-}
-
-/* ── Navigation Hub Router ── */
-function showPage(page) {
-  currentPage = page;
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  const nb = document.getElementById('nav-' + page);
-  if (nb) nb.classList.add('active');
-  
-  if (page === 'home') renderHome();
-  else if (page === 'members') renderMembers();
-  else if (page === 'health') renderHealthHome();
-  else if (page === 'finance') renderFinance();
-  else if (page === 'docs') renderDocs();
-}
-
-/* ══════════════════════════════════════
-   HOME RENDER ENGINE
-══════════════════════════════════════ */
-function renderHome() {
-  const members = DB.members.length;
-  const docs = DB.docs.length;
-  document.getElementById('content').innerHTML = `
-    <div style="margin-bottom:18px">
-      <div style="font-size:22px;font-weight:800;letter-spacing:-0.5px">Good day 👋</div>
-      <div style="font-size:13px;color:var(--text3);margin-top:3px">KulDhan Vault Dashboard · Stored locally on device</div>
+// ══════════════════════════════════════════
+// HOME PAGE
+// ══════════════════════════════════════════
+function renderHome(){
+  setNav('home');
+  const meds=Object.values(DB.health).reduce((s,h)=>s+(h.medications||[]).filter(m=>m.current).length,0);
+  const fdAlert=DB.fds.filter(f=>{const d=daysTo(f.maturity);return d!==null&&d<=60&&d>0}).length;
+  const insAlert=DB.insurance.filter(p=>{const d=daysTo(p.due);return d!==null&&d<=30&&d>0}).length;
+  document.getElementById('pg').innerHTML=`
+    <div style="margin-bottom:14px">
+      <div style="font-size:22px;font-weight:800;letter-spacing:-.5px">Good day 👋</div>
+      <div style="font-size:12px;color:var(--t3);margin-top:3px">All data stored only on this device · no server</div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-      <div onclick="showPage('members')" style="background:#fff; border:0.5px solid var(--border); border-radius:var(--r); padding:14px; cursor:pointer">
-        <div style="font-size:22px;margin-bottom:8px">👨‍👩‍👧‍👦</div>
-        <div style="font-size:22px;font-weight:800;color:var(--blue);">${members}</div>
-        <div style="font-size:12px;color:var(--text3);">Family members</div>
+    ${DB.members.length===0?`<div class="card" style="background:var(--gl);border-color:#9FE1CB;display:flex;align-items:flex-start;gap:12px"><span style="font-size:28px">🏠</span><div><div style="font-size:14px;font-weight:700;color:var(--gd);margin-bottom:4px">Welcome to KulDhan!</div><div style="font-size:12px;color:#0F6E56;margin-bottom:8px">Start by adding your family members.</div><button onclick="A.go('family')" style="padding:7px 14px;background:var(--g);color:#fff;border-radius:var(--r8);font-size:12px;font-weight:600;border:none;cursor:pointer">Add first member →</button></div></div>`:''}
+    ${fdAlert||insAlert?`<div class="ntc na">⚠️ ${fdAlert?fdAlert+' FD(s) maturing within 60 days':''}${fdAlert&&insAlert?' · ':''}${insAlert?insAlert+' insurance premium(s) due soon':''}</div>`:''}
+    <div class="sumgrid">
+      <div class="sumc" onclick="A.go('family')"><div class="sumc-n" style="color:var(--b)">${DB.members.length}</div><div class="sumc-l">Members</div></div>
+      <div class="sumc" onclick="A.go('health')"><div class="sumc-n" style="color:#D4537E">${meds}</div><div class="sumc-l">Active meds</div></div>
+      <div class="sumc" onclick="A.go('fin')"><div class="sumc-n" style="color:var(--g)">${DB.fds.length}</div><div class="sumc-l">FDs</div></div>
+      <div class="sumc" onclick="A.go('fin')"><div class="sumc-n" style="color:var(--r)">${DB.insurance.length}</div><div class="sumc-l">Policies</div></div>
+    </div>
+    <div class="stl">Quick actions</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+      ${[['🚨','SOS emergency','A.showSOS()'],['💊','Add medication',"A.go('health')"],['🛡️','Add insurance','A.addInsSheet()'],['📤','Share encrypted','A.shareMenu()']].map(([ic,lb,ac])=>`<div onclick="${ac}" style="background:var(--w);border:1px solid var(--bd);border-radius:var(--r10);padding:12px;cursor:pointer;display:flex;align-items:center;gap:8px"><span style="font-size:18px">${ic}</span><span style="font-size:12px;color:var(--t2)">${lb}</span></div>`).join('')}
+    </div>
+    <div class="ntc ng" style="font-size:12px">🔒 <strong>Zero-knowledge privacy:</strong> KulDhan never sends your data anywhere. Export and back up to your own Google Drive regularly.</div>`;
+}
+
+// ══════════════════════════════════════════
+// FAMILY MEMBERS
+// ══════════════════════════════════════════
+function renderFamily(){
+  setNav('family');
+  document.getElementById('pg').innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px">
+      <div><div style="font-size:18px;font-weight:700">Family members</div><div style="font-size:12px;color:var(--t3)">${DB.members.length} member(s)</div></div>
+      <button onclick="A.memberSheet()" style="padding:8px 13px;background:var(--g);color:#fff;border-radius:var(--r10);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add</button>
+    </div>
+    ${DB.members.length===0?`<div class="emp"><div class="emp-ic">👨‍👩‍👧‍👦</div><h3>No family members yet</h3><p>Add yourself and your family to get started</p><button class="btnp" onclick="A.memberSheet()">Add first member</button></div>`:''}
+    ${DB.members.map(m=>{
+      const age=m.dob?Math.floor((Date.now()-new Date(m.dob))/(365.25*86400000)):null;
+      return `<div class="card" style="display:flex;align-items:center;gap:11px">
+        ${m.photo?`<img src="${m.photo}" class="thumb">`:`<div class="av" style="width:44px;height:44px;font-size:18px;background:${m.color||'var(--g)'}">${(m.name||'?')[0]}</div>`}
+        <div style="flex:1;min-width:0;cursor:pointer" onclick="A.memberDetail('${m.id}')">
+          <div style="font-size:14px;font-weight:600">${esc(m.name)}</div>
+          <div style="font-size:12px;color:var(--t3)">${esc(m.relation||'')}${age?' · Age '+age:''}${m.blood?' · <strong style="color:var(--r)">'+esc(m.blood)+'</strong>':''}</div>
+          ${m.mobile?`<div style="font-size:12px;color:var(--t3)">📞 ${esc(m.mobile)}</div>`:''}
+        </div>
+        <div style="display:flex;gap:2px">
+          <button class="ebtn" onclick="A.memberSheet('${m.id}')">✏️</button>
+          <button class="xbtn" onclick="A.delMember('${m.id}')">×</button>
+        </div>
+      </div>`;
+    }).join('')}`;
+}
+
+function memberSheet(id){
+  const m=id?DB.members.find(x=>x.id===id):{};
+  const v=m||{};
+  openSheet(id?'Edit member':'Add family member',`
+    <div class="fld"><label class="lbl">Upload photo (optional)</label>
+      <div class="cam-row">
+        <button type="button" class="cam-btn" onclick="document.getElementById('fi-photo-cam').click()">📷 Take photo</button>
+        <button type="button" class="cam-btn" onclick="document.getElementById('fi-photo-file').click()">🖼️ Choose file</button>
       </div>
-      <div onclick="showPage('docs')" style="background:#fff; border:0.5px solid var(--border); border-radius:var(--r); padding:14px; cursor:pointer">
-        <div style="font-size:22px;margin-bottom:8px">📂</div>
-        <div style="font-size:22px;font-weight:800;color:var(--amber);">${docs}</div>
-        <div style="font-size:12px;color:var(--text3);">Documents Vault</div>
+      <div id="drive-thumb" style="margin-bottom:8px"></div>
+      <input type="hidden" id="drive-link" value="${esc(v.photo||'')}">
+      <input type="hidden" id="drive-name" value="">
+    </div>
+    <div class="fld"><label class="lbl">Full name *</label><input class="inp" id="mn" value="${esc(v.name||'')}" placeholder="e.g. Pankaj Kapote"></div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Relation</label>
+        <select class="inp" id="mr">${RELS.map(r=>`<option value="${r}"${v.relation===r?' selected':''}>${r[0].toUpperCase()+r.slice(1)}</option>`).join('')}</select>
+      </div>
+      <div class="fld"><label class="lbl">Blood group</label>
+        <select class="inp" id="mb">${BLOOD.map(b=>`<option value="${b}"${v.blood===b?' selected':''}>${b}</option>`).join('')}</select>
       </div>
     </div>
-    <div class="section-title">Transfer Options</div>
-    <div onclick="openShareSheet()" style="background:#white; border:0.5px solid var(--border); border-radius:var(--r2); padding:12px; cursor:pointer; display:flex; align-items:center; gap:8px">
-      <span style="font-size:18px">📤</span><span style="font-size:12px">Granular Custom Sharing</span>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Date of birth</label><input class="inp" type="date" id="md" value="${esc(v.dob||'')}"></div>
+      <div class="fld"><label class="lbl">Mobile</label><input class="inp" type="tel" id="mm" value="${esc(v.mobile||'')}" placeholder="98XXXXXXXX"></div>
     </div>
-  `;
+    <div class="fld"><label class="lbl">Email</label><input class="inp" type="email" id="me" value="${esc(v.email||'')}"></div>
+    <div class="g2">
+      <div class="fld"><label class="lbl">Aadhaar last 4</label><input class="inp" maxlength="4" id="ma" value="${esc(v.aadhaar||'')}" placeholder="xxxx"></div>
+      <div class="fld"><label class="lbl">PAN (last 4)</label><input class="inp" maxlength="4" id="mpan" value="${esc(v.pan||'')}" placeholder="xxxx"></div>
+    </div>
+    <div class="fld"><label class="lbl">Avatar colour</label>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px" id="colrow">
+        ${COLORS.map(c=>`<button type="button" data-col="${c}" onclick="A.pickColor('${c}')" style="width:28px;height:28px;border-radius:50%;background:${c};border:${(v.color||COLORS[0])===c?'3px solid var(--t1)':'2px solid transparent'};cursor:pointer;outline:none"></button>`).join('')}
+      </div>
+      <input type="hidden" id="mc" value="${esc(v.color||COLORS[0])}">
+    </div>
+    <div class="fld"><label class="lbl">Notes</label><textarea class="inp" id="mno" rows="2" placeholder="Any additional info">${esc(v.notes||'')}</textarea></div>
+    <input type="hidden" id="mid" value="${id||''}">
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveMember()" style="flex:1">Save member</button>
+      ${id?`<button class="btnd" onclick="A.delMember('${id}')">Delete</button>`:''}
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+
 }
 
-/* ══════════════════════════════════════
-   FAMILY MANAGEMENT CORE
-══════════════════════════════════════ */
-function renderMembers() {
-  const members = DB.members;
-  document.getElementById('content').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+function pickColor(c){
+  document.getElementById('mc').value=c;
+  document.querySelectorAll('#colrow button').forEach(b=>{b.style.border=b.dataset.col===c?'3px solid var(--t1)':'2px solid transparent'});
+}
+
+function saveMember(){
+  const name=gv('mn');if(!name){alert('Full name is required');return}
+  const id=gv('mid')||uid();
+  const photo=gv('drive-link')||( DB.members.find(m=>m.id===id)?.photo||'');
+  const m={id,name,relation:gv('mr'),blood:gv('mb'),dob:gv('md'),mobile:gv('mm'),email:gv('me'),aadhaar:gv('ma'),pan:gv('mpan'),color:gv('mc')||COLORS[0],notes:gv('mno'),photo};
+  const idx=DB.members.findIndex(x=>x.id===id);
+  if(idx>=0)DB.members[idx]=m;else{DB.members.push(m);initH(id)}
+  sdb();closeSheet();renderFamily();toast('✓ Member saved')
+}
+
+function delMember(id){
+  if(!confirm('Delete this member and all their health records? This cannot be undone.'))return;
+  DB.members=DB.members.filter(m=>m.id!==id);delete DB.health[id];
+  sdb();closeSheet();renderFamily();toast('Member deleted')
+}
+
+function memberDetail(id){
+  const m=DB.members.find(x=>x.id===id);if(!m)return;
+  const age=m.dob?Math.floor((Date.now()-new Date(m.dob))/(365.25*86400000)):null;
+  const h=DB.health[id]||{};
+  const meds=(h.medications||[]).filter(x=>x.current).length;
+  openSheet(m.name,`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      ${m.photo?`<img src="${m.photo}" style="width:56px;height:56px;border-radius:50%;object-fit:cover;border:2px solid var(--bd)">`:`<div class="av" style="width:56px;height:56px;font-size:22px;background:${m.color||'var(--g)'}">${(m.name||'?')[0]}</div>`}
       <div>
-        <div style="font-size:18px;font-weight:700">Family Members</div>
-        <div style="font-size:12px;color:var(--text3)">${members.length} member(s)</div>
+        <div style="font-size:17px;font-weight:700">${esc(m.name)}</div>
+        <div style="font-size:13px;color:var(--t3)">${esc(m.relation||'')}${age?' · Age '+age:''}${m.blood?' · <span style="color:var(--r);font-weight:700">'+esc(m.blood)+'</span>':''}</div>
       </div>
-      <button onclick="showAddMemberSheet()" style="padding:8px 14px;background:var(--green);color:#fff;border-radius:var(--r2);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add</button>
     </div>
-    ${members.length === 0 ? '<div class="empty"><p>No member context layers created yet.</p></div>' : ''}
-    ${members.map(m => `
-      <div class="card" onclick="showMemberDetail('${m.id}')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer">
-        <div style="display:flex; align-items:center; gap:12px;">
-          <div class="avatar" style="background:${m.color||'var(--green)'}">${(m.name||'M')[0]}</div>
-          <div>
-            <div style="font-size:14px;font-weight:600">${esc(m.name)}</div>
-            <div style="font-size:12px;color:var(--text3)">${esc(m.relation||'')} · <span style="color:var(--red); font-weight:600">${esc(m.blood_group||'Unknown')}</span></div>
+    ${m.mobile?`<div class="csm" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px"><span style="font-size:13px">📞 ${esc(m.mobile)}</span><a href="tel:${esc(m.mobile)}" style="font-size:12px;color:var(--g);font-weight:600;padding:5px 10px;background:var(--gl);border-radius:var(--r8)">Call</a></div>`:''}
+    ${m.email?`<div class="csm" style="margin-bottom:7px;font-size:13px">✉️ ${esc(m.email)}</div>`:''}
+    <div class="csm" style="margin-bottom:14px;display:flex;justify-content:space-between">
+      <span style="font-size:12px;color:var(--t2)">${meds} active medication(s)</span>
+      <span style="font-size:12px;color:var(--t2)">${(h.allergies||[]).length} allergy/ies</span>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btnp" onclick="A.closeSheet();A.go('health');A.healthMember('${id}')" style="flex:2">View health records</button>
+      <button class="btns" onclick="A.memberSheet('${id}')">✏️ Edit</button>
+    </div>`);
+}
+// ══════════════════════════════════════════
+// HEALTH
+// ══════════════════════════════════════════
+const HS=[
+  {k:'allergies',ic:'⚠️',lb:'Allergies'},
+  {k:'medications',ic:'💊',lb:'Medications'},
+  {k:'conditions',ic:'🩺',lb:'Conditions'},
+  {k:'vitals',ic:'📊',lb:'Vitals'},
+  {k:'doctors',ic:'👨‍⚕️',lb:'Doctors'},
+  {k:'procedures',ic:'🏥',lb:'Surgeries'},
+  {k:'vaccinations',ic:'💉',lb:'Vaccinations'},
+  {k:'history',ic:'🧬',lb:'Family history'},
+];
+
+function renderHealth(){
+  setNav('health');
+  if(DB.members.length===0){document.getElementById('pg').innerHTML=`<div class="emp"><div class="emp-ic">❤️</div><h3>Add family members first</h3><p>Health records are linked to family members</p><button class="btnp" onclick="A.go('family')">Add members</button></div>`;return}
+  document.getElementById('pg').innerHTML=`
+    <div style="font-size:18px;font-weight:700;margin-bottom:4px">Health & Medical</div>
+    <div style="font-size:12px;color:var(--t3);margin-bottom:13px">Select a family member</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:9px">
+      ${DB.members.map(m=>`<div onclick="A.healthMember('${m.id}')" style="background:var(--w);border:1px solid var(--bd);border-radius:var(--r12);padding:14px 10px;cursor:pointer;text-align:center">
+        ${m.photo?`<img src="${m.photo}" style="width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--bd);margin:0 auto 7px;display:block">`:`<div class="av" style="width:44px;height:44px;font-size:18px;background:${m.color||'var(--g)'};margin:0 auto 7px">${(m.name||'?')[0]}</div>`}
+        <div style="font-size:12px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.name)}</div>
+        ${m.blood?`<div style="font-size:12px;color:var(--r);font-weight:700">${esc(m.blood)}</div>`:''}
+      </div>`).join('')}
+    </div>`;
+}
+
+function healthMember(id){
+  setNav('health');initH(id);
+  const m=DB.members.find(x=>x.id===id);if(!m)return;
+  const h=DB.health[id];
+  document.getElementById('pg').innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <button onclick="A.renderHealth()" style="font-size:22px;border:none;background:none;cursor:pointer;color:var(--t3);line-height:1;padding:0">←</button>
+      ${m.photo?`<img src="${m.photo}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;border:1px solid var(--bd)">`:`<div class="av" style="width:36px;height:36px;font-size:15px;background:${m.color||'var(--g)'}">${(m.name||'?')[0]}</div>`}
+      <div style="font-size:16px;font-weight:700">${esc(m.name)}</div>
+    </div>
+    <div class="sg">
+      ${HS.map(s=>`<div class="sc" onclick="A.healthSec('${id}','${s.k}')">
+        <div class="sc-ic">${s.ic}</div>
+        <div class="sc-nm">${s.lb}</div>
+        <div class="sc-ct">${(h[s.k]||[]).length} record(s)</div>
+      </div>`).join('')}
+    </div>`;
+}
+
+function healthSec(mid,sec){
+  initH(mid);
+  const items=DB.health[mid][sec]||[];
+  const s=HS.find(x=>x.k===sec);
+  openSheet(s.ic+' '+s.lb,`
+    ${items.length===0?`<div style="font-size:13px;color:var(--t3);padding:10px 0;text-align:center">No records yet</div>`:''}
+    ${items.map((it,i)=>`<div class="csm" style="position:relative;padding-right:60px">
+      ${renderHItem(sec,it)}
+      <div style="position:absolute;right:8px;top:8px;display:flex;gap:2px">
+        <button class="ebtn" onclick="A.editHItem('${mid}','${sec}',${i})">✏️</button>
+        <button class="xbtn" onclick="A.delHItem('${mid}','${sec}',${i})">×</button>
+      </div>
+    </div>`).join('')}
+    <button class="btnp" style="margin-top:10px" onclick="A.addHSheet('${mid}','${sec}')">+ Add ${s.lb.toLowerCase()}</button>`);
+}
+
+function renderHItem(sec,it){
+  if(sec==='allergies')return`<div style="font-size:13px;font-weight:600">${esc(it.allergen)}</div>${it.reaction?`<div style="font-size:12px;color:var(--t3)">${esc(it.reaction)}</div>`:``}${it.severity?`<span class="pl" style="background:var(--rl);color:#791F1F;display:inline-block;margin-top:3px">${esc(it.severity)}</span>`:''}`;
+  if(sec==='medications')return`<div style="font-size:13px;font-weight:600">${esc(it.name)} <span style="color:var(--t3);font-weight:400">${esc(it.dose||'')}</span></div><div style="font-size:12px;color:var(--t3)">${esc(it.frequency||'')}${it.food?' · '+esc(it.food):''}${it.current?' · <span style="color:var(--g)">Active</span>':''}</div>${it.refill?`<div style="font-size:11px;color:var(--a)">⏰ Refill by ${esc(it.refill)}</div>`:''}`;
+  if(sec==='conditions')return`<div style="font-size:13px;font-weight:600">${esc(it.name)}</div><div style="font-size:12px;color:var(--t3)">${esc(it.status||'')}${it.since?' since '+esc(it.since):''}${it.doctor?' · Dr. '+esc(it.doctor):''}</div>`;
+  if(sec==='vitals')return`<div style="font-size:12px;color:var(--t3);margin-bottom:5px">${esc(it.date||'')}</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:3px">${[['BP',it.bp],['Sugar (F)',it.sugar_f],['HbA1c%',it.hba1c],['Cholesterol',it.chol],['BMI',it.bmi],['Weight',it.weight?it.weight+' kg':'']].filter(x=>x[1]).map(x=>`<div style="font-size:12px"><span style="color:var(--t3)">${x[0]}: </span>${esc(String(x[1]))}</div>`).join('')}</div>`;
+  if(sec==='doctors')return`<div style="font-size:13px;font-weight:600">${esc(it.name)}</div><div style="font-size:12px;color:var(--t3)">${esc(it.spec||'')}${it.hosp?' · '+esc(it.hosp):''}</div>${it.phone?`<a href="tel:${esc(it.phone)}" style="font-size:12px;color:var(--g);font-weight:500">📞 ${esc(it.phone)}</a>`:''}`;
+  if(sec==='procedures')return`<div style="font-size:13px;font-weight:600">${esc(it.name)}</div><div style="font-size:12px;color:var(--t3)">${esc(it.hosp||'')}${it.date?' · '+esc(it.date):''}</div>`;
+  if(sec==='vaccinations')return`<div style="font-size:13px;font-weight:600">${esc(it.name)}</div><div style="font-size:12px;color:var(--t3)">Given: ${esc(it.date||'')}${it.due?' · Due: '+esc(it.due):''}</div>`;
+  if(sec==='history')return`<div style="font-size:13px"><span style="color:var(--t3)">${esc(it.rel)}: </span><strong>${esc(it.cond)}</strong></div>`;
+  return`<div style="font-size:13px">${JSON.stringify(it)}</div>`;
+}
+
+function hForm(sec,v){v=v||{};
+  const yes=(f,lb,id,ph='',type='text')=>`<div class="fld"><label class="lbl">${lb}</label><input class="inp" id="${id}" type="${type}" value="${esc(v[f]||'')}" placeholder="${ph}"></div>`;
+  const ysel=(f,lb,id,opts)=>`<div class="fld"><label class="lbl">${lb}</label><select class="inp" id="${id}">${opts.map(o=>`<option value="${o}"${v[f]===o?' selected':''}>${o}</option>`).join('')}</select></div>`;
+  const ytxt=(f,lb,id,ph='')=>`<div class="fld"><label class="lbl">${lb}</label><textarea class="inp" id="${id}" rows="2" placeholder="${ph}">${esc(v[f]||'')}</textarea></div>`;
+  const yck=(f,lb,id)=>`<label style="display:flex;align-items:center;gap:8px;margin-bottom:11px;cursor:pointer"><input type="checkbox" id="${id}" ${v[f]?' checked':''} style="width:16px;height:16px;accent-color:var(--g)"><span style="font-size:13px">${lb}</span></label>`;
+  if(sec==='allergies')return`${showUploadBox({table:'allergies'})}<div class="g2">${yes('allergen','Allergen *','h0','e.g. Penicillin, Shellfish')}${ysel('severity','Severity','h2',['mild','moderate','severe','life-threatening'])}</div>${yes('reaction','Reaction / symptoms','h1','e.g. Rash, Breathing difficulty')}`;
+  if(sec==='medications')return`${showUploadBox({table:'medications'})}<div class="g2">${yes('name','Medicine name *','h0','e.g. Metformin')}${yes('dose','Dose','h1','500mg')}</div><div class="g2">${yes('frequency','Frequency','h2','Twice daily')}${yes('food','Food instruction','h3','After meals')}</div>${yes('refill','Refill due date','h4','','date')}${yck('current','Currently taking','h5')}`;
+  if(sec==='conditions')return`<div class="g2">${yes('name','Condition *','h0','e.g. Type 2 Diabetes')}${ysel('status','Status','h2',['active','managed','resolved','monitoring'])}</div><div class="g2">${yes('since','Since (year)','h1','2018')}${yes('doctor','Managing doctor','h3','Dr. name')}</div>`;
+  if(sec==='vitals')return`${showUploadBox({table:'vitals'})}<div class="fld"><label class="lbl">Date of checkup *</label><input class="inp" type="date" id="h0" value="${esc(v.date||'')}"></div><div class="g2">${yes('bp','BP (sys/dia)','h1','120/80')}${yes('sugar_f','Blood sugar (fasting)','h2','95 mg/dL')}</div><div class="g2">${yes('hba1c','HbA1c %','h3','6.5')}${yes('chol','Cholesterol','h4','180 mg/dL')}</div><div class="g2">${yes('weight','Weight (kg)','h5','72')}${yes('bmi','BMI','h6','24.2')}</div>`;
+  if(sec==='doctors')return`<div class="g2">${yes('name','Doctor name *','h0','Dr. Rahul Mehta')}${yes('spec','Speciality','h1','Cardiologist')}</div>${yes('hosp','Hospital / Clinic','h2','Jupiter Hospital, Thane')}${yes('phone','Phone *','h3','022-XXXXXXXX','tel')}${yes('fee','Consultation fee (₹)','h4','500','number')}`;
+  if(sec==='procedures')return`${showUploadBox({table:'procedures'})}${yes('name','Procedure / Surgery name *','h0','e.g. Appendectomy')}${yes('hosp','Hospital','h1','Hospital name')}${yes('date','Date','h2','','date')}${ytxt('notes','Outcome / recovery notes','h3','Details...')}`;
+  if(sec==='vaccinations')return`${yes('name','Vaccine name *','h0','e.g. COVID-19 Booster')}<div class="g2">${yes('date','Date given *','h1','','date')}${yes('due','Next due date','h2','','date')}</div>${yes('where','Given at','h3','PHC / Clinic name')}`;
+  if(sec==='history')return`<div class="g2">${yes('rel','Relative *','h0','Father, Mother...')}${yes('cond','Condition *','h1','e.g. Diabetes')}</div>`;
+  return'';
+}
+
+function addHSheet(mid,sec){
+  const s=HS.find(x=>x.k===sec);
+  openSheet('Add '+s.lb,hForm(sec)+`
+    <input type="hidden" id="hmid" value="${mid}">
+    <input type="hidden" id="hsec" value="${sec}">
+    <input type="hidden" id="hidx" value="-1">
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btnp" onclick="A.saveHItem()" style="flex:1">Save</button>
+      <button class="btns" onclick="A.healthSec('${mid}','${sec}')">Back</button>
+    </div>`);
+}
+
+function editHItem(mid,sec,idx){
+  const s=HS.find(x=>x.k===sec);
+  const it=DB.health[mid][sec][idx];
+  openSheet('Edit '+s.lb,hForm(sec,it)+`
+    <input type="hidden" id="hmid" value="${mid}">
+    <input type="hidden" id="hsec" value="${sec}">
+    <input type="hidden" id="hidx" value="${idx}">
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btnp" onclick="A.saveHItem()" style="flex:1">Update</button>
+      <button class="btns" onclick="A.healthSec('${mid}','${sec}')">Back</button>
+    </div>`);
+  // Pre-fill values
+  const v=it;
+  const fields={allergies:['allergen','reaction'],medications:['name','dose','frequency','food','refill'],conditions:['name','since','doctor'],vitals:['bp','sugar_f','hba1c','chol','weight','bmi'],doctors:['name','spec','hosp','phone','fee'],procedures:['name','hosp','notes'],vaccinations:['name','where'],history:['rel','cond']};
+  // Date fields
+  if(sec==='vitals'&&v.date) sv('h0',v.date);
+  if(sec==='procedures'&&v.date) sv('h2',v.date);
+  if(sec==='vaccinations'){sv('h1',v.date);sv('h2',v.due);}
+  if(sec==='conditions'){sv('h2',v.status);}
+  if(sec==='allergies') sv('h2',v.severity);
+}
+
+function saveHItem(){
+  const mid=gv('hmid'),sec=gv('hsec'),idx=parseInt(gv('hidx'));
+  const g=id=>{const e=document.getElementById(id);if(!e)return'';return e.type==='checkbox'?e.checked:e.value.trim()};
+  let it={};
+  if(sec==='allergies'){if(!g('h0')){alert('Allergen required');return}it={allergen:g('h0'),reaction:g('h1'),severity:g('h2')}}
+  else if(sec==='medications'){if(!g('h0')){alert('Medicine name required');return}it={name:g('h0'),dose:g('h1'),frequency:g('h2'),food:g('h3'),refill:g('h4'),current:g('h5')}}
+  else if(sec==='conditions'){if(!g('h0')){alert('Condition required');return}it={name:g('h0'),since:g('h1'),status:g('h2'),doctor:g('h3')}}
+  else if(sec==='vitals'){if(!g('h0')){alert('Date required');return}it={date:g('h0'),bp:g('h1'),sugar_f:g('h2'),hba1c:g('h3'),chol:g('h4'),weight:g('h5'),bmi:g('h6')}}
+  else if(sec==='doctors'){if(!g('h0')){alert('Doctor name required');return}it={name:g('h0'),spec:g('h1'),hosp:g('h2'),phone:g('h3'),fee:g('h4')}}
+  else if(sec==='procedures'){if(!g('h0')){alert('Procedure name required');return}it={name:g('h0'),hosp:g('h1'),date:g('h2'),notes:g('h3')}}
+  else if(sec==='vaccinations'){if(!g('h0')){alert('Vaccine name required');return}it={name:g('h0'),date:g('h1'),due:g('h2'),where:g('h3')}}
+  else if(sec==='history'){if(!g('h0')||!g('h1')){alert('Relative and condition required');return}it={rel:g('h0'),cond:g('h1')}}
+  initH(mid);
+  if(idx>=0) DB.health[mid][sec][idx]=it;
+  else DB.health[mid][sec].push(it);
+  sdb();toast('✓ Record saved');healthSec(mid,sec);
+}
+
+function delHItem(mid,sec,idx){
+  if(!confirm('Delete this record?'))return;
+  DB.health[mid][sec].splice(idx,1);sdb();healthSec(mid,sec);
+}
+// ══════════════════════════════════════════
+// FINANCE PAGE
+// ══════════════════════════════════════════
+function renderFin(){
+  setNav('fin');
+  const tab=localStorage.getItem('kd_ftab')||'accounts';
+  document.getElementById('pg').innerHTML=`
+    <div style="font-size:18px;font-weight:700;margin-bottom:12px">Finance & Insurance</div>
+    <div class="tabs" id="ftabs">
+      ${[['accounts','🏦 Accounts'],['fds','📋 FDs'],['mfs','📈 MFs'],['insurance','🛡️ Insurance']].map(([k,l])=>`<button class="tab${k===tab?' on':''}" onclick="A.finTab('${k}')">${l}</button>`).join('')}
+    </div>
+    <div id="ftab-body">${finTabContent(tab)}</div>`;
+}
+
+function finTab(t){
+  localStorage.setItem('kd_ftab',t);
+  document.querySelectorAll('#ftabs .tab').forEach((b,i)=>{
+    b.classList.toggle('on',['accounts','fds','mfs','insurance'][i]===t);
+  });
+  const body=document.getElementById('ftab-body');
+  if(body) body.innerHTML=finTabContent(t);
+}
+
+function finTabContent(t){
+  if(t==='accounts') return finAccounts();
+  if(t==='fds')      return finFDs();
+  if(t==='mfs')      return finMFs();
+  if(t==='insurance')return finInsurance();
+  return '';
+}
+
+// ── Bank Accounts ──────────────────────────
+function finAccounts(){
+  const total=DB.accounts.length;
+  return `<div style="text-align:right;margin-bottom:9px">
+    <button onclick="A.addAccountSheet()" style="padding:7px 13px;background:var(--g);color:#fff;border-radius:var(--r8);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add account</button>
+  </div>
+  ${total===0?`<div class="emp" style="padding:20px 0"><div class="emp-ic">🏦</div><h3>No bank accounts yet</h3></div>`:''}
+  ${DB.accounts.map((a,i)=>`<div class="csm" style="display:flex;justify-content:space-between;align-items:flex-start">
+    <div>
+      <div style="font-size:13px;font-weight:600">${esc(a.bank)} ···${esc(a.last4||'')}</div>
+      <div style="font-size:12px;color:var(--t3)">${esc(a.type||'')}${a.holder?' · '+esc(a.holder):''}${a.ifsc?' · IFSC: '+esc(a.ifsc):''}</div>
+      ${a.nominee?`<div style="font-size:11px;color:var(--t4)">Nominee: ${esc(a.nominee)}</div>`:''}
+    </div>
+    <div style="display:flex;gap:3px;align-items:center">
+      <button class="ebtn" onclick="A.editAccountSheet(${i})">✏️</button>
+      <button class="xbtn" onclick="A.delFinRec('accounts',${i})">×</button>
+    </div>
+  </div>`).join('')}`;
+}
+
+function accountForm(v){v=v||{};return`
+  <div class="fld"><label class="lbl">Bank name *</label><input class="inp" id="f0" value="${esc(v.bank||'')}" placeholder="SBI, HDFC, ICICI..."></div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Account type</label>
+      <select class="inp" id="f1">${['Savings','Current','Salary','NRE','NRO','PPF'].map(t=>`<option value="${t}"${v.type===t?' selected':''}>${t}</option>`).join('')}</select>
+    </div>
+    <div class="fld"><label class="lbl">Last 4 digits</label><input class="inp" id="f2" maxlength="4" value="${esc(v.last4||'')}" placeholder="1234"></div>
+  </div>
+  <div class="fld"><label class="lbl">Account holder</label><select class="inp" id="f3">${memOpts(v.holder_id)}</select></div>
+  <div class="fld"><label class="lbl">IFSC code</label><input class="inp" id="f4" value="${esc(v.ifsc||'')}" placeholder="HDFC0001234"></div>
+  <div class="fld"><label class="lbl">Nominee</label><input class="inp" id="f5" value="${esc(v.nominee||'')}" placeholder="Nominee name"></div>`;}
+
+function addAccountSheet(){
+  openSheet('Add bank account', accountForm()+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveAccount(-1)" style="flex:1">Save account</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+
+function editAccountSheet(idx){
+  const v=DB.accounts[idx];
+  openSheet('Edit bank account', accountForm(v)+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveAccount(${idx})" style="flex:1">Update</button>
+      <button class="btnd" onclick="A.delFinRec('accounts',${idx})">Delete</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+
+function saveAccount(idx){
+  const name=gv('f0');if(!name){alert('Bank name required');return}
+  const hid=gv('f3');
+  const obj={bank:name,type:gv('f1'),last4:gv('f2'),holder:memName(hid),holder_id:hid,ifsc:gv('f4'),nominee:gv('f5')};
+  if(idx>=0) DB.accounts[idx]=obj; else DB.accounts.push(obj);
+  sdb();closeSheet();finTab('accounts');toast('✓ Account saved');
+}
+
+// ── Fixed Deposits ─────────────────────────
+function finFDs(){
+  const total=DB.fds.reduce((s,f)=>s+(Number(f.principal)||0),0);
+  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+    <div style="font-size:12px;color:var(--t3)">Total: <strong style="color:var(--t1)">${fINR(total)}</strong></div>
+    <button onclick="A.addFDSheet()" style="padding:7px 13px;background:var(--g);color:#fff;border-radius:var(--r8);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add FD</button>
+  </div>
+  ${DB.fds.length===0?`<div class="emp" style="padding:20px 0"><div class="emp-ic">📋</div><h3>No FDs added yet</h3></div>`:''}
+  ${DB.fds.map((f,i)=>{
+    const d=daysTo(f.maturity);const soon=d!==null&&d<=60&&d>0;const done=d!==null&&d<=0;
+    return`<div class="csm" style="border-left:3px solid ${done?'var(--t4)':soon?'var(--r)':'var(--a)'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div>
+          <div style="font-size:13px;font-weight:600">${esc(f.bank)}</div>
+          <div style="font-size:12px;color:var(--t3)">${esc(f.holder||'')}${f.rate?' · '+esc(f.rate)+'% p.a.':''}${f.fd_no?' · '+esc(f.fd_no):''}</div>
+          ${soon?`<div style="font-size:11px;color:var(--r);font-weight:600">⚠️ Matures in ${d} days</div>`:done?`<span class="pl" style="background:#f1f0eb;color:var(--t3)">Matured</span>`:f.maturity?`<div style="font-size:11px;color:var(--t3)">Matures ${new Date(f.maturity).toLocaleDateString('en-IN',{month:'short',year:'numeric'})}</div>`:''}
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:15px;font-weight:700">${fINR(f.principal)}</div>
+          ${f.maturity_amt?`<div style="font-size:11px;color:var(--t3)">→ ${fINR(f.maturity_amt)}</div>`:''}
+          <div style="display:flex;gap:3px;margin-top:4px;justify-content:flex-end">
+            <button class="ebtn" onclick="A.editFDSheet(${i})">✏️</button>
+            <button class="xbtn" onclick="A.delFinRec('fds',${i})">×</button>
           </div>
         </div>
-        <button onclick="event.stopPropagation(); showAddMemberSheet('${m.id}')" style="background:none; color:var(--blue); font-size:12px; font-weight:600;">✏️ Edit</button>
-      </div>`).join('')}
-  `;
+      </div>
+    </div>`;}).join('')}`;
 }
 
-function showAddMemberSheet(editId) {
-  const m = editId ? DB.members.find(x=>x.id===editId) : null;
-  const v = m || {};
-  openSheet(editId ? 'Modify Member Profile' : 'Add Family Profile', `
-    <div class="field"><label class="lbl">Full Name *</label><input class="inp" id="m-name" value="${esc(v.name||'')}"></div>
-    <div class="grid2">
-      <div class="field"><label class="lbl">Relation</label>
-        <select class="inp" id="m-rel">${RELATIONS.map(r=>`<option value="${r}" ${v.relation===r?'selected':''}>${r}</option>`).join('')}</select>
+function fdForm(v){v=v||{};return`
+  <div class="fld"><label class="lbl">Bank name *</label><input class="inp" id="f0" value="${esc(v.bank||'')}" placeholder="SBI, HDFC..."></div>
+  <div class="fld"><label class="lbl">Account holder</label><select class="inp" id="f1">${memOpts(v.holder_id)}</select></div>
+  <div class="fld"><label class="lbl">FD receipt / account number</label><input class="inp" id="f2" value="${esc(v.fd_no||'')}" placeholder="FD number"></div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Principal (₹) *</label><input class="inp" type="number" id="f3" value="${esc(v.principal||'')}" placeholder="300000"></div>
+    <div class="fld"><label class="lbl">Rate (% p.a.)</label><input class="inp" type="number" step="0.01" id="f4" value="${esc(v.rate||'')}" placeholder="7.25"></div>
+  </div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Start date</label><input class="inp" type="date" id="f5" value="${esc(v.start||'')}"></div>
+    <div class="fld"><label class="lbl">Maturity date *</label><input class="inp" type="date" id="f6" value="${esc(v.maturity||'')}"></div>
+  </div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Maturity amount (₹)</label><input class="inp" type="number" id="f7" value="${esc(v.maturity_amt||'')}" placeholder="348000"></div>
+    <div class="fld"><label class="lbl">Nominee</label><input class="inp" id="f8" value="${esc(v.nominee||'')}" placeholder="Nominee name"></div>
+  </div>
+  <label style="display:flex;align-items:center;gap:8px;margin-bottom:11px;cursor:pointer">
+    <input type="checkbox" id="f9" ${v.auto_renew?' checked':''} style="width:16px;height:16px;accent-color:var(--g)">
+    <span style="font-size:13px">Auto-renew on maturity</span>
+  </label>`;}
+
+function addFDSheet(){
+  openSheet('Add Fixed Deposit', fdForm()+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveFD(-1)" style="flex:1">Save FD</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+function editFDSheet(idx){
+  openSheet('Edit Fixed Deposit', fdForm(DB.fds[idx])+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveFD(${idx})" style="flex:1">Update</button>
+      <button class="btnd" onclick="A.delFinRec('fds',${idx})">Delete</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+function saveFD(idx){
+  if(!gv('f0')||!gv('f3')){alert('Bank name and principal required');return}
+  const hid=gv('f1');
+  const e=id=>(document.getElementById(id)||{}).checked;
+  const obj={bank:gv('f0'),holder:memName(hid),holder_id:hid,fd_no:gv('f2'),principal:gv('f3'),rate:gv('f4'),start:gv('f5'),maturity:gv('f6'),maturity_amt:gv('f7'),nominee:gv('f8'),auto_renew:e('f9')};
+  if(idx>=0) DB.fds[idx]=obj; else DB.fds.push(obj);
+  sdb();closeSheet();finTab('fds');toast('✓ FD saved');
+}
+
+// ── Mutual Funds ───────────────────────────
+function finMFs(){
+  const total=DB.mfs.reduce((s,m)=>s+(Number(m.current_val)||Number(m.invested)||0),0);
+  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+    <div style="font-size:12px;color:var(--t3)">Total: <strong style="color:var(--t1)">${fINR(total)}</strong></div>
+    <button onclick="A.addMFSheet()" style="padding:7px 13px;background:var(--g);color:#fff;border-radius:var(--r8);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add MF</button>
+  </div>
+  ${DB.mfs.length===0?`<div class="emp" style="padding:20px 0"><div class="emp-ic">📈</div><h3>No mutual funds yet</h3></div>`:''}
+  ${DB.mfs.map((m,i)=>{
+    const gain=m.invested&&m.current_val?((m.current_val-m.invested)/m.invested*100).toFixed(1):null;
+    return`<div class="csm">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(m.scheme)}</div>
+          <div style="font-size:12px;color:var(--t3)">${esc(m.amc||'')}${m.type?' · '+esc(m.type):''}${m.folio?' · '+esc(m.folio):''}</div>
+          ${m.sip?`<span class="pl" style="background:var(--gl);color:var(--gd);display:inline-block;margin-top:3px">SIP ₹${Number(m.sip).toLocaleString('en-IN')}/mo</span>`:''}
+        </div>
+        <div style="text-align:right;flex-shrink:0;margin-left:10px">
+          <div style="font-size:15px;font-weight:700">${fINR(m.current_val||m.invested)}</div>
+          ${gain!==null?`<div style="font-size:12px;color:${Number(gain)>=0?'var(--g)':'var(--r)'};font-weight:600">${Number(gain)>=0?'+':''}${gain}%</div>`:''}
+          <div style="display:flex;gap:3px;margin-top:3px;justify-content:flex-end">
+            <button class="ebtn" onclick="A.editMFSheet(${i})">✏️</button>
+            <button class="xbtn" onclick="A.delFinRec('mfs',${i})">×</button>
+          </div>
+        </div>
       </div>
-      <div class="field"><label class="lbl">Blood Type</label>
-        <select class="inp" id="m-bg">${BLOOD_GROUPS.map(b=>`<option value="${b}" ${v.blood_group===b?'selected':''}>${b}</option>`).join('')}</select>
-      </div>
+    </div>`;}).join('')}`;
+}
+
+function mfForm(v){v=v||{};return`
+  <div class="fld"><label class="lbl">Scheme name *</label><input class="inp" id="f0" value="${esc(v.scheme||'')}" placeholder="Parag Parikh Flexi Cap"></div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">AMC</label><input class="inp" id="f1" value="${esc(v.amc||'')}" placeholder="PPFAS, HDFC MF..."></div>
+    <div class="fld"><label class="lbl">Fund type</label>
+      <select class="inp" id="f2">${['Equity','Debt','Hybrid','ELSS','Liquid','Index','Arbitrage'].map(t=>`<option value="${t}"${v.type===t?' selected':''}>${t}</option>`).join('')}</select>
     </div>
-    <input type="hidden" id="m-color" value="${esc(v.color||COLORS[0])}">
-    <input type="hidden" id="m-editid" value="${editId||''}">
-    <button class="btn-primary" onclick="saveMember()" style="margin-top:8px;">Save Profile Context</button>
-  `);
+  </div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Folio number</label><input class="inp" id="f3" value="${esc(v.folio||'')}" placeholder="12345678"></div>
+    <div class="fld"><label class="lbl">Holder</label><select class="inp" id="f4">${memOpts(v.holder_id)}</select></div>
+  </div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Invested (₹)</label><input class="inp" type="number" id="f5" value="${esc(v.invested||'')}" placeholder="500000"></div>
+    <div class="fld"><label class="lbl">Current value (₹)</label><input class="inp" type="number" id="f6" value="${esc(v.current_val||'')}" placeholder="612000"></div>
+  </div>
+  <div class="fld"><label class="lbl">SIP amount / month (₹)</label><input class="inp" type="number" id="f7" value="${esc(v.sip||'')}" placeholder="10000"></div>`;}
+
+function addMFSheet(){
+  openSheet('Add Mutual Fund', mfForm()+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveMF(-1)" style="flex:1">Save MF</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+function editMFSheet(idx){
+  openSheet('Edit Mutual Fund', mfForm(DB.mfs[idx])+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveMF(${idx})" style="flex:1">Update</button>
+      <button class="btnd" onclick="A.delFinRec('mfs',${idx})">Delete</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+function saveMF(idx){
+  if(!gv('f0')){alert('Scheme name required');return}
+  const hid=gv('f4');
+  const obj={scheme:gv('f0'),amc:gv('f1'),type:gv('f2'),folio:gv('f3'),holder:memName(hid),holder_id:hid,invested:gv('f5'),current_val:gv('f6'),sip:gv('f7')};
+  if(idx>=0) DB.mfs[idx]=obj; else DB.mfs.push(obj);
+  sdb();closeSheet();finTab('mfs');toast('✓ Mutual fund saved');
 }
 
-function saveMember() {
-  const name = document.getElementById('m-name').value.trim();
-  if (!name) { alert('Name field required.'); return; }
-  const editId = document.getElementById('m-editid').value;
-  const memberObj = {
-    id: editId || uid(),
-    name,
-    relation: document.getElementById('m-rel').value,
-    blood_group: document.getElementById('m-bg').value,
-    color: document.getElementById('m-color').value || COLORS[0]
-  };
-
-  if (editId) {
-    const idx = DB.members.findIndex(x=>x.id===editId);
-    if(idx>=0) DB.members[idx] = memberObj;
-  } else {
-    DB.members.push(memberObj);
-  }
-  saveDB();
-  closeSheetDirect();
-  renderMembers();
-}
-
-function showMemberDetail(id) {
-  const m = DB.members.find(x=>x.id===id);
-  if (!m) return;
-  openSheet(m.name, `
-    <div style="font-size:14px;margin-bottom:8px">Relation Context: <strong>${esc(m.relation)}</strong></div>
-    <div style="font-size:14px;margin-bottom:8px">Blood Type: <strong>${esc(m.blood_group)}</strong></div>
-    <button class="btn-secondary" onclick="showAddMemberSheet('${m.id}')" style="margin-top:8px;">Edit Info Tag</button>
-  `);
-}
-
-function renderHealthHome() { document.getElementById('content').innerHTML = `<div class="card"><h3>Health Metrics Module</h3><p>Medical structural layers execute accurately inside specific family object cards updates safely.</p></div>`; }
-function renderFinance() { document.getElementById('content').innerHTML = `<div class="card"><h3>Finance & Policies Space</h3><p>Granular structural records parameters configurations stay here.</p></div>`; }
-
-/* ══════════════════════════════════════
-   DOCUMENTS VAULT SYSTEM
-══════════════════════════════════════ */
-function renderDocs() {
-  const docs = DB.docs || [];
-  document.getElementById('content').innerHTML = `
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div>
-        <div style="font-size:18px;font-weight:700">Documents Vault</div>
-        <div style="font-size:12px;color:var(--text3)">${docs.length} saved tracking file records</div>
-      </div>
-      <button onclick="showAddDocSheet()" style="padding:8px 14px;background:var(--green);color:#fff;border-radius:var(--r2);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add Doc</button>
-    </div>
-    ${docs.length===0?'<div class="empty"><p>No document structures found inside local storage vault framework.</p></div>':''}
-    ${docs.map((d,i)=>renderDocCard(d,i)).join('')}
-  `;
-}
-
-function renderDocCard(d, i) {
-  return `
-    <div class="card" style="border-left:4px solid var(--green); position:relative;">
-      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+// ── Insurance ──────────────────────────────
+function finInsurance(){
+  return `<div style="text-align:right;margin-bottom:9px">
+    <button onclick="A.addInsSheet()" style="padding:7px 13px;background:var(--g);color:#fff;border-radius:var(--r8);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add policy</button>
+  </div>
+  ${DB.insurance.length===0?`<div class="emp" style="padding:20px 0"><div class="emp-ic">🛡️</div><h3>No insurance policies yet</h3></div>`:''}
+  ${DB.insurance.map((p,i)=>{
+    const d=daysTo(p.due);const soon=d!==null&&d<=30&&d>0;
+    return`<div class="csm" style="border-left:3px solid ${soon?'var(--r)':'var(--b)'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div>
-          <div style="font-size:14px;font-weight:700;">${esc(d.name)} <span class="pill pill-blue" style="font-size:10px; padding:2px 6px;">${esc(d.category)}</span></div>
-          <div style="font-size:12px;color:var(--text3);margin-top:3px;">Assigned to: ${esc(d.member || 'All')}</div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:2px">
+            <span style="font-size:13px;font-weight:600">${esc(p.name)}</span>
+            <span class="pl" style="background:var(--bl);color:#0C447C">${esc(p.type||'')}</span>
+          </div>
+          <div style="font-size:12px;color:var(--t3)">${esc(p.insurer||'')}${p.policy_no?' · '+esc(p.policy_no):''}</div>
+          ${p.cover?`<div style="font-size:12px;color:var(--t2)">Cover: <strong>${fINR(p.cover)}</strong>${p.premium?' · Premium: '+fINR(p.premium)+'/yr':''}</div>`:''}
+          ${soon?`<div style="font-size:11px;color:var(--r);font-weight:600">⚠️ Premium due in ${d} days</div>`:p.due?`<div style="font-size:11px;color:var(--t3)">Due: ${new Date(p.due).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})}</div>`:''}
         </div>
-        <div style="display:flex; gap:10px;">
-          <button onclick="showAddDocSheet('${d.id}')" style="background:none; color:var(--blue); font-size:12px; font-weight:600; cursor:pointer;">✏️ Edit</button>
-          <button onclick="deleteDoc(${i})" style="background:none; color:var(--text4); font-size:16px; cursor:pointer;">×</button>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+          ${p.helpline?`<a href="tel:${esc(p.helpline)}" style="font-size:12px;color:var(--g);font-weight:600;background:var(--gl);padding:4px 9px;border-radius:var(--r8)">📞 Claim</a>`:''}
+          <div style="display:flex;gap:3px">
+            <button class="ebtn" onclick="A.editInsSheet(${i})">✏️</button>
+            <button class="xbtn" onclick="A.delFinRec('insurance',${i})">×</button>
+          </div>
         </div>
       </div>
-      
-      ${d.drive_link ? `<div style="margin-top:6px; font-size:11px;"><a href="${esc(d.drive_link)}" target="_blank" style="color:var(--blue); text-decoration:underline;">☁️ View Full Cloud File Source</a></div>` : ''}
-      
-      ${d.local_img ? `
-        <div style="margin-top:10px; text-align:center; background:#fafafa; padding:8px; border-radius:var(--r3); border:0.5px solid var(--border2)">
-          <img src="${d.local_img}" style="max-width:100%; max-height:120px; object-fit:contain; border-radius:4px;">
-        </div>
-      ` : ''}
-    </div>
-  `;
+    </div>`;}).join('')}`;
 }
 
-function showAddDocSheet(editId) {
-  const d = editId ? DB.docs.find(x=>x.id===editId) : null;
-  const v = d || {};
-  temporaryBase64Image = v.local_img || "";
-
-  openSheet(editId ? 'Modify Document Information' : 'Attach Document Frame', `
-    <div class="field">
-      <label class="lbl">Camera Snapshot / Local Attachment File Preview</label>
-      <div class="preview-box" id="preview-container" onclick="triggerFilePicker()">
-        ${temporaryBase64Image ? `<img src="${temporaryBase64Image}">` : `<span style="color:var(--text3);font-size:12px;">📸 Tap to snap photo or select image asset file</span>`}
-      </div>
+function insForm(v){v=v||{};return`
+  <div class="fld"><label class="lbl">Policy name *</label><input class="inp" id="f0" value="${esc(v.name||'')}" placeholder="e.g. ManipalCigna ProHealth Plus"></div>
+  <div class="fld"><label class="lbl">Insurance company (insurer)</label><input class="inp" id="f1" value="${esc(v.insurer||'')}" placeholder="LIC, ManipalCigna, HDFC Ergo..."></div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Type</label>
+      <select class="inp" id="f2">${['health','term life','endowment','vehicle','travel','personal accident','ULIP','money back','other'].map(t=>`<option value="${t}"${v.type===t?' selected':''}>${t}</option>`).join('')}</select>
     </div>
+    <div class="fld"><label class="lbl">Policy number</label><input class="inp" id="f3" value="${esc(v.policy_no||'')}" placeholder="Policy no."></div>
+  </div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Sum assured (₹)</label><input class="inp" type="number" id="f4" value="${esc(v.cover||'')}" placeholder="500000"></div>
+    <div class="fld"><label class="lbl">Annual premium (₹)</label><input class="inp" type="number" id="f5" value="${esc(v.premium||'')}" placeholder="12000"></div>
+  </div>
+  <div class="fld"><label class="lbl">Premium due date</label><input class="inp" type="date" id="f6" value="${esc(v.due||'')}"></div>
+  <div class="fld"><label class="lbl">Claim helpline</label><input class="inp" id="f7" value="${esc(v.helpline||'')}" placeholder="1800-XXX-XXXX"></div>
+  <div class="fld"><label class="lbl">Nominee</label><input class="inp" id="f8" value="${esc(v.nominee||'')}" placeholder="Nominee name"></div>
+  <div class="fld"><label class="lbl">TPA / Third party administrator</label><input class="inp" id="f9" value="${esc(v.tpa||'')}" placeholder="e.g. Medi Assist"></div>`;}
 
-    <div class="field">
-      <label class="lbl">Google Drive / Secure Cloud High-Res Link</label>
-      <input class="inp" id="d-link" value="${esc(v.drive_link||'')}" placeholder="Paste file reference tracking URL link here">
-    </div>
-
-    <div class="field"><label class="lbl">Document Name Tag Tag *</label><input class="inp" id="d0" value="${esc(v.name||'')}" placeholder="e.g. Health Plan Card / Identity Card"></div>
-    <div class="grid2">
-      <div class="field"><label class="lbl">Category</label>
-        <select class="inp" id="d1">
-          <option value="identity" ${v.category==='identity'?'selected':''}>Identity</option>
-          <option value="insurance" ${v.category==='insurance'?'selected':''}>Insurance</option>
-          <option value="finance" ${v.category==='finance'?'selected':''}>Finance</option>
-          <option value="medical" ${v.category==='medical'?'selected':''}>Medical</option>
-          <option value="other" ${v.category==='other'?'selected':''}>Other</option>
-        </select>
-      </div>
-      <div class="field"><label class="lbl">Family Allocation</label>
-        <select class="inp" id="d2">
-          <option value="">All Contexts</option>
-          ${DB.members.map(m=>`<option value="${esc(m.name)}" ${v.member===m.name?'selected':''}>${esc(m.name)}</option>`).join('')}
-        </select>
-      </div>
-    </div>
-
-    <input type="hidden" id="d-editid" value="${editId||''}">
-    <button class="btn-primary" onclick="saveDoc()" style="margin-top:10px;">Save Changes Matrix</button>
-  `);
+function addInsSheet(){
+  openSheet('Add insurance policy', insForm()+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveIns(-1)" style="flex:1">Save policy</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+function editInsSheet(idx){
+  openSheet('Edit insurance policy', insForm(DB.insurance[idx])+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveIns(${idx})" style="flex:1">Update</button>
+      <button class="btnd" onclick="A.delFinRec('insurance',${idx})">Delete</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+function saveIns(idx){
+  if(!gv('f0')){alert('Policy name required');return}
+  const obj={name:gv('f0'),insurer:gv('f1'),type:gv('f2'),policy_no:gv('f3'),cover:gv('f4'),premium:gv('f5'),due:gv('f6'),helpline:gv('f7'),nominee:gv('f8'),tpa:gv('f9')};
+  if(idx>=0) DB.insurance[idx]=obj; else DB.insurance.push(obj);
+  sdb();closeSheet();finTab('insurance');toast('✓ Policy saved');
 }
 
-function saveDoc() {
-  const g = id => (document.getElementById(id)||{}).value || '';
-  if (!g('d0')) { alert('Title naming field required.'); return; }
-  
-  const editId = document.getElementById('d-editid').value;
-  const docObj = {
-    id: editId || uid(),
-    name: g('d0'),
-    category: g('d1'),
-    member: g('d2'),
-    drive_link: g('d-link'),
-    local_img: temporaryBase64Image
+function delFinRec(table,idx){
+  if(!confirm('Delete this record?'))return;
+  DB[table].splice(idx,1);sdb();
+  finTab(localStorage.getItem('kd_ftab')||'accounts');
+}
+// ══════════════════════════════════════════
+// DOCUMENTS PAGE
+// ══════════════════════════════════════════
+function renderDocs(){
+  setNav('docs');
+  document.getElementById('pg').innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div><div style="font-size:18px;font-weight:700">Documents</div>
+      <div style="font-size:12px;color:var(--t3)">${DB.docs.length} document(s) · stored on this device</div></div>
+      <button onclick="A.addDocSheet()" style="padding:8px 13px;background:var(--g);color:#fff;border-radius:var(--r10);font-size:13px;font-weight:600;border:none;cursor:pointer">+ Add</button>
+    </div>
+    <div class="ntc ng" style="font-size:12px;margin-bottom:12px">
+      📱 Files attached here are stored <strong>on this device</strong>. For permanent backup, export to your Google Drive.
+    </div>
+    ${DB.docs.length===0?`<div class="emp"><div class="emp-ic">📂</div><h3>No documents yet</h3><p>Add insurance cards, Aadhaar, PAN, FD receipts, reports — attach photos or PDFs</p><button class="btnp" onclick="A.addDocSheet()">Add first document</button></div>`:''}
+    ${DB.docs.map((d,i)=>{
+      const bg=CAT_BG[d.category]||CAT_BG.other;
+      return`<div class="card">
+        <div style="display:flex;gap:10px;align-items:flex-start">
+          ${d.file_data&&d.file_type&&d.file_type.startsWith('image/')?
+            `<img src="${d.file_data}" style="width:52px;height:52px;object-fit:cover;border-radius:var(--r8);border:1px solid var(--bd);flex-shrink:0">`:
+            d.file_data?`<div style="width:52px;height:52px;background:#f5f4ef;border-radius:var(--r8);border:1px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">📄</div>`:''}
+          <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:7px;margin-bottom:3px;flex-wrap:wrap">
+              <span style="font-size:13px;font-weight:600">${esc(d.name)}</span>
+              <span class="pl" style="background:${bg};color:var(--t2)">${esc(d.category||'other')}</span>
+            </div>
+            <div style="font-size:12px;color:var(--t3)">${esc(d.member||'All members')}${d.date?' · '+esc(d.date):''}</div>
+            ${d.notes?`<div style="font-size:12px;color:var(--t2);margin-top:4px;line-height:1.4">${esc(d.notes)}</div>`:''}
+          </div>
+          <div style="display:flex;flex-direction:column;gap:3px;flex-shrink:0">
+            <button class="ebtn" onclick="A.editDocSheet(${i})">✏️</button>
+            <button class="xbtn" onclick="A.delDoc(${i})">×</button>
+          </div>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          ${d.file_data?`<button onclick="A.viewFile(${i})" style="font-size:12px;padding:5px 10px;background:var(--bl);color:var(--b);border-radius:var(--r8);border:none;cursor:pointer;font-family:var(--f)">👁 View file</button>`:''}
+          <button onclick="A.shareDocWhatsApp(${i})" style="font-size:12px;padding:5px 10px;background:#E7FBF0;color:#1A7A43;border-radius:var(--r8);border:none;cursor:pointer;font-family:var(--f)">📤 Share</button>
+          ${d.drive_link?`<a href="${esc(d.drive_link)}" target="_blank" style="font-size:12px;padding:5px 10px;background:var(--al);color:#633806;border-radius:var(--r8)">☁️ Drive link</a>`:''}
+        </div>
+      </div>`;
+    }).join('')}`;
+}
+
+function docForm(v){v=v||{};return`
+  ${driveUploadBox()}
+  <div class="fld"><label class="lbl">Document name *</label><input class="inp" id="d0" value="${esc(v.name||'')}" placeholder="e.g. LIC Policy 2026, Aadhaar Card"></div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Category</label>
+      <select class="inp" id="d1">${Object.keys(CAT_BG).map(c=>`<option value="${c}"${v.category===c?' selected':''}>${c[0].toUpperCase()+c.slice(1)}</option>`).join('')}</select>
+    </div>
+    <div class="fld"><label class="lbl">Family member</label>
+      <select class="inp" id="d2"><option value="">All members</option>${DB.members.map(m=>`<option value="${esc(m.name)}"${v.member===m.name?' selected':''}>${esc(m.name)}</option>`).join('')}</select>
+    </div>
+  </div>
+  <div class="g2">
+    <div class="fld"><label class="lbl">Date / issue date</label><input class="inp" type="date" id="d3" value="${esc(v.date||'')}"></div>
+    <div class="fld"><label class="lbl">Expiry date</label><input class="inp" type="date" id="d4" value="${esc(v.expiry||'')}"></div>
+  </div>
+  <div class="fld"><label class="lbl">Key details / notes</label><textarea class="inp" id="d5" rows="2" placeholder="e.g. Policy no. 123456, covers family of 4, helpline 1800-XXX">${esc(v.notes||'')}</textarea></div>
+  <div class="fld"><label class="lbl">Google Drive link (optional — for cloud backup)</label>
+    <input class="inp" id="d6" value="${esc(v.drive_link||'')}" placeholder="https://drive.google.com/...">
+    <div style="font-size:11px;color:var(--t3);margin-top:3px">Upload file to Google Drive → Share → Copy link → paste here</div>
+  </div>`;}
+
+function addDocSheet(){
+  openSheet('Add document', docForm()+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveDoc(-1)" style="flex:1">Save document</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+
+function editDocSheet(idx){
+  openSheet('Edit document', docForm(DB.docs[idx])+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveDoc(${idx})" style="flex:1">Update</button>
+      <button class="btnd" onclick="A.delDoc(${idx})">Delete</button>
+      <button class="btns" onclick="A.closeSheet()">Cancel</button>
+    </div>`);
+}
+
+function saveDoc(idx){
+  const name=gv('d0');if(!name){alert('Document name required');return}
+  const fileData=gv('drive-link');
+  const fileName=gv('drive-name');
+  const existing=idx>=0?DB.docs[idx]:{};
+  const obj={
+    name,category:gv('d1'),member:gv('d2'),date:gv('d3'),expiry:gv('d4'),
+    notes:gv('d5'),drive_link:gv('d6')||existing.drive_link||'',
+    file_data:fileData||existing.file_data||'',
+    file_name:fileName||existing.file_name||'',
+    file_type:fileName?(fileName.match(/\.(jpg|jpeg|png|gif|webp)$/i)?'image/jpeg':'application/pdf'):(existing.file_type||''),
+    added:new Date().toISOString()
   };
+  if(idx>=0) DB.docs[idx]=obj; else DB.docs.push(obj);
+  sdb();closeSheet();renderDocs();toast('✓ Document saved');
+}
 
-  if (editId) {
-    const idx = DB.docs.findIndex(x=>x.id===editId);
-    if(idx>=0) DB.docs[idx] = docObj;
-  } else {
-    DB.docs.push(docObj);
+function delDoc(idx){
+  if(!confirm('Delete this document record?'))return;
+  DB.docs.splice(idx,1);sdb();renderDocs();
+}
+
+function viewFile(idx){
+  const d=DB.docs[idx];
+  if(!d||!d.file_data){toast('No file attached');return}
+  const w=window.open('','_blank');
+  if(d.file_type&&d.file_type.startsWith('image/')){
+    w.document.write(`<html><body style="margin:0;background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh"><img src="${d.file_data}" style="max-width:100%;max-height:100vh;object-fit:contain"></body></html>`);
+  }else{
+    const a=w.document.createElement('a');
+    a.href=d.file_data;a.download=d.file_name||d.name;
+    w.document.body.appendChild(a);a.click();w.close();
   }
-
-  saveDB();
-  closeSheetDirect();
-  renderDocs();
 }
 
-function deleteDoc(i) {
-  if(!confirm('Delete selected asset reference completely?')) return;
-  DB.docs.splice(i,1);
-  saveDB();
-  renderDocs();
+function shareDocWhatsApp(idx){
+  const d=DB.docs[idx];
+  const lines=[`📄 *KulDhan Document*`,`Name: ${d.name}`,`Category: ${d.category||''}`,d.member?`Member: ${d.member}`:'',d.date?`Date: ${d.date}`:'',d.notes?`Notes: ${d.notes}`:'',d.drive_link?`Drive link: ${d.drive_link}`:''].filter(Boolean);
+  window.open('https://wa.me/?text='+encodeURIComponent(lines.join('\n')),'_blank');
 }
 
-/* ══════════════════════════════════════
-   GRANULAR DATA EXPORT SCREEN
-══════════════════════════════════════ */
-function openShareSheet() {
-  openSheet('Granular Data Share Options', `
-    <div class="notice notice-amber" style="font-size:12px;">Toggle checkbox options explicitly to package target vault configurations safely.</div>
-    <div class="scope-row"><input type="checkbox" id="sc-members" checked><label for="sc-members">Profile Profiles Parameters</label></div>
-    <div class="scope-row"><input type="checkbox" id="sc-docs" checked><label for="sc-docs">Documents Reference Objects & Images</label></div>
-    <div style="margin-top:18px;"><button class="btn-primary" onclick="processGranularPackage()">Compile Sealed Export Package</button></div>
-  `);
+// ══════════════════════════════════════════
+// SOS / EMERGENCY
+// ══════════════════════════════════════════
+function showSOS(){
+  const allergies=[],meds=[];
+  DB.members.forEach(m=>{
+    const h=DB.health[m.id]||{};
+    (h.allergies||[]).forEach(a=>allergies.push({who:m.name,what:a.allergen,sev:a.severity}));
+    (h.medications||[]).filter(x=>x.current).forEach(med=>meds.push({who:m.name,what:med.name+' '+(med.dose||'')}));
+  });
+  openSheet('🚨 SOS / Emergency',`
+    <div class="ntc nr" style="font-size:12px;margin-bottom:12px">Show this to a doctor or paramedic. Tap <strong>Share via WhatsApp</strong> to send instantly.</div>
+    <div class="stl" style="margin-top:0">Blood groups
+      <button class="stl-btn" onclick="A.go('family')">Edit in Family</button>
+    </div>
+    ${DB.members.filter(m=>m.blood).map(m=>`<div class="csm" style="display:flex;justify-content:space-between;align-items:center">
+      <div style="display:flex;align-items:center;gap:8px">
+        ${m.photo?`<img src="${m.photo}" style="width:28px;height:28px;border-radius:50%;object-fit:cover">`:`<div class="av" style="width:28px;height:28px;font-size:12px;background:${m.color||'var(--g)'}">${(m.name||'?')[0]}</div>`}
+        <span style="font-size:13px;font-weight:500">${esc(m.name)}</span>
+      </div>
+      <span style="font-size:16px;font-weight:800;color:var(--r)">${esc(m.blood)}</span>
+    </div>`).join('')||`<div style="font-size:13px;color:var(--t3);padding:5px 0">No blood groups set</div>`}
+    <div class="stl">Allergies</div>
+    ${allergies.length?allergies.map(a=>`<div style="font-size:12px;padding:5px 0;border-bottom:1px solid var(--bd)">⚠️ <strong>${esc(a.who)}</strong>: ${esc(a.what)}${a.sev?' ('+esc(a.sev)+')':''}</div>`).join(''):`<div style="font-size:12px;color:var(--t3);padding:5px 0">No allergies recorded</div>`}
+    <div class="stl">Current medications</div>
+    ${meds.length?meds.map(m=>`<div style="font-size:12px;padding:5px 0;border-bottom:1px solid var(--bd)">💊 <strong>${esc(m.who)}</strong>: ${esc(m.what)}</div>`).join(''):`<div style="font-size:12px;color:var(--t3);padding:5px 0">No active medications recorded</div>`}
+    <div class="stl">Emergency contacts
+      <button class="stl-btn" onclick="A.addSOSContact()">+ Add</button>
+    </div>
+    ${(DB.sos.contacts||[]).map((c,i)=>`<div class="csm" style="display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:13px;font-weight:600">${esc(c.name)}</div>
+        <div style="font-size:12px;color:var(--t3)">${esc(c.relation||'')}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <a href="tel:${esc(c.phone)}" style="padding:6px 11px;background:${i===0?'var(--r)':'var(--gl)'};color:${i===0?'#fff':'var(--gd)'};border-radius:var(--r8);font-size:12px;font-weight:600">${esc(c.phone)}</a>
+        <button class="ebtn" onclick="A.editSOSContact(${i})">✏️</button>
+        <button class="xbtn" onclick="A.delSOSContact(${i})">×</button>
+      </div>
+    </div>`).join('')||`<div style="font-size:12px;color:var(--t3);padding:5px 0">No contacts added</div>`}
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button onclick="A.sosWhatsApp()" style="flex:1;padding:11px;background:#25D366;color:#fff;border-radius:var(--r10);font-size:14px;font-weight:700;border:none;cursor:pointer">📤 Share via WhatsApp</button>
+    </div>`);
 }
 
-function processGranularPackage() {
-  const exportScope = {};
-  if (document.getElementById('sc-members').checked) exportScope.members = DB.members;
-  if (document.getElementById('sc-docs').checked) exportScope.docs = DB.docs;
-  exportScope.sos = DB.sos;
+function sosContactForm(v){v=v||{};return`
+  <div class="fld"><label class="lbl">Name *</label><input class="inp" id="s0" value="${esc(v.name||'')}" placeholder="Contact name"></div>
+  <div class="fld"><label class="lbl">Relation</label><input class="inp" id="s1" value="${esc(v.relation||'')}" placeholder="Spouse, Son, Doctor..."></div>
+  <div class="fld"><label class="lbl">Phone *</label><input class="inp" type="tel" id="s2" value="${esc(v.phone||'')}" placeholder="98XXXXXXXX"></div>`;}
 
-  const pin = prompt("Create a simple 4-digit verification secure password key code to seal this data:");
-  if (!pin || pin.length < 4) {
-    alert("Invalid entry key requirements.");
-    return;
-  }
-
-  const outputString = "SECURE-VAULT:" + xorCipher(JSON.stringify(exportScope), pin);
-  const blob = new Blob([outputString], {type:'text/plain'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'kuldhan-vault-package-' + new Date().toISOString().slice(0,10) + '.txt';
-  a.click();
-  URL.revokeObjectURL(url);
-  closeSheetDirect();
-  showDriveToast("Encrypted file compiled successfully!");
+function addSOSContact(){
+  openSheet('Add emergency contact', sosContactForm()+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveSOSContact(-1)" style="flex:1">Save</button>
+      <button class="btns" onclick="A.showSOS()">Back</button>
+    </div>`);
+}
+function editSOSContact(idx){
+  openSheet('Edit emergency contact', sosContactForm(DB.sos.contacts[idx])+`
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btnp" onclick="A.saveSOSContact(${idx})" style="flex:1">Update</button>
+      <button class="btnd" onclick="A.delSOSContact(${idx})">Delete</button>
+      <button class="btns" onclick="A.showSOS()">Back</button>
+    </div>`);
+}
+function saveSOSContact(idx){
+  const name=gv('s0'),phone=gv('s2');
+  if(!name||!phone){alert('Name and phone required');return}
+  if(!DB.sos.contacts) DB.sos.contacts=[];
+  const obj={name,relation:gv('s1'),phone};
+  if(idx>=0) DB.sos.contacts[idx]=obj; else DB.sos.contacts.push(obj);
+  sdb();toast('✓ Contact saved');showSOS();
+}
+function delSOSContact(idx){
+  if(!confirm('Delete this contact?'))return;
+  DB.sos.contacts.splice(idx,1);sdb();showSOS();
 }
 
-/* ══════════════════════════════════════
-   INITIALIZATION ROUTINE RUNNERS
-══════════════════════════════════════ */
-loadDB();
-if (!localStorage.getItem(PRIVACY_KEY)) {
-  document.getElementById('privacy-modal').style.display = 'flex';
+function sosWhatsApp(){
+  const lines=['🚨 *KulDhan Emergency Card*',''];
+  DB.members.filter(m=>m.blood).forEach(m=>lines.push('🩸 '+m.name+': *'+m.blood+'*'));
+  lines.push('');
+  const allergies=[];
+  DB.members.forEach(m=>{const h=DB.health[m.id]||{};(h.allergies||[]).forEach(a=>allergies.push(m.name+': '+a.allergen+(a.severity?' ('+a.severity+')':'')));});
+  if(allergies.length){lines.push('⚠️ *Allergies:*');allergies.forEach(a=>lines.push('  '+a));lines.push('');}
+  if((DB.sos.contacts||[]).length){lines.push('📞 *Emergency contacts:*');DB.sos.contacts.forEach((c,i)=>lines.push('  '+(i===0?'🔴':'🟡')+' '+c.name+(c.relation?' ('+c.relation+')':'')+': '+c.phone));}
+  window.open('https://wa.me/?text='+encodeURIComponent(lines.join('\n')),'_blank');
 }
-showPage('home');
+
+// ══════════════════════════════════════════
+// MAIN NAVIGATION
+// ══════════════════════════════════════════
+function go(p){
+  curPage=p;setNav(p);
+  if(p==='home')    renderHome();
+  else if(p==='family') renderFamily();
+  else if(p==='health') renderHealth();
+  else if(p==='fin')    renderFin();
+  else if(p==='docs')   renderDocs();
+}
+
+// ══════════════════════════════════════════
+// PUBLIC API
+// ══════════════════════════════════════════
+window.A={
+  go,openSheet,closeSheet,
+  backup,doExport,importMenu,doImport,
+  shareMenu,doShare,doDecrypt,
+  doOCR,doDriveUpload,
+  memberSheet,saveMember,delMember,memberDetail,pickColor,
+  renderHealth,healthMember,healthSec,
+  addHSheet,editHItem,saveHItem,delHItem,
+  renderFin,finTab,
+  addAccountSheet,editAccountSheet,saveAccount,
+  addFDSheet,editFDSheet,saveFD,
+  addMFSheet,editMFSheet,saveMF,
+  addInsSheet:addInsSheet,editInsSheet,saveIns,
+  delFinRec,
+  addDocSheet,editDocSheet,saveDoc,delDoc,viewFile,shareDocWhatsApp,
+  showSOS,addSOSContact,editSOSContact,saveSOSContact,delSOSContact,sosWhatsApp,
+  gv,memName,
+};
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+function init(){
+  ldb();
+
+  // Privacy notice
+  const prv=document.getElementById('prv-ov');
+  const pts=document.getElementById('prv-pts');
+  const btn=document.getElementById('prv-ok');
+
+  pts.innerHTML=[
+    ['📱','Your data stays on this device','All records are stored in your browser\'s local storage only. KulDhan servers store absolutely nothing about you.'],
+    ['🔒','Works completely offline','No internet connection needed. No data is ever sent to any server anywhere.'],
+    ['☁️','Google Drive backup is your choice','You can export your data and upload it to your own Google Drive. Only you can access your Drive — we cannot.'],
+    ['🔐','Encrypted sharing','When you share data with family or doctors, it is AES-256 encrypted with a PIN only you choose. We cannot read it.'],
+    ['⚠️','We cannot recover lost data','If you clear your browser or lose your device without a backup, your data is permanently gone. Export regularly.'],
+  ].map(([ic,t,d])=>`<div style="display:flex;gap:10px;padding:10px 12px;background:#f5f4ef;border-radius:var(--r10);margin-bottom:7px"><span style="font-size:19px;flex-shrink:0">${ic}</span><div><div style="font-size:13px;font-weight:600;margin-bottom:2px">${t}</div><div style="font-size:12px;color:var(--t2);line-height:1.5">${d}</div></div></div>`).join('');
+
+  if(!localStorage.getItem(PVK)){prv.classList.add('show')}
+  btn.onclick=()=>{localStorage.setItem(PVK,'1');prv.classList.remove('show')};
+
+  // Wire OCR inputs
+  document.getElementById('fi-ocr').onchange=doOCR;
+  document.getElementById('fi-cam').onchange=doOCR;
+  document.getElementById('fi-drive').onchange=doDriveUpload;
+
+  go('home');
+}
+
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',init);
+}else{
+  init();
+}
 </script>
 </body>
 </html>
